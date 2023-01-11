@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello Bulma!</title>
+    <link rel="stylesheet" href="assets/css/all.css">
+    <link rel="stylesheet" href="assets/bulma.min.css">
+  </head>
+  <body>
+    <div class="section" id="menuSection">
+      <div class="container">
+        <div class="tabs">
+          <ul>
+            <li id="playersTab"><a>Players</a></li>
+            <li class="is-active" id="compTab"><a>Round Score</a></li>
+            <li id="resultsTab"><a>Results</a></li>
+            <li id="treeResultsTab"><a>Tree of Results</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <section class="section is-hidden" id="addPlayersSection">
+      <div class="container px-2 py-4" id="playersCont">
+        <h3 class="mb-3">Add players at the form below:</h3>
+        <div class="field has-addons mb-4">
+          <div class="control is-expanded">
+            <input class="input" type="text" placeholder="Enter Name and Firstname">
+          </div>
+          <div class="control" id="add-player">
+            <a class="button is-info">
+              Add Player
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="container is-hidden players-list p-2">
+        <h3 class="mb-3">Tournament Participants:</h3>
+        <ul id="players-list" class="pb-4">
+          
+        </ul>
+        <button class="button is-success is-small" id="startComp">Start competition</button>
+      </div>
+    </section>
+    <section class="section" id="compSection">
+      <div class="container px-2 py-4">
+        <div class="columns">
+          <div class="column">
+            <h2 class="title">Please choose participants</h2>
+          </div>
+        </div>
+        <div class="tile is-ancestor">
+          <div class="tile is-vertical is-8">
+            <div class="tile">
+              <div class="tile is-parent is-vertical">
+                <article class="tile is-child notification is-primary">
+                  <p class="title">Vertical...</p>
+                  <p class="subtitle">Top tile</p>
+                  <div class="dropdown dropdowwn-players">
+                    <div class="dropdown-trigger">
+                      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                        <span>Choose the Player One</span>
+                        <span class="icon is-small">
+                          <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu1" role="menu">
+                      <div class="dropdown-content">
+                      </div>
+                    </div>
+                  </div>
+                </article>
+                <article class="tile is-child notification is-warning">
+                  <p class="title">...tiles</p>
+                  <p class="subtitle">Bottom tile</p>
+                  <div class="dropdown dropdowwn-players">
+                    <div class="dropdown-trigger">
+                      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                        <span>Choose the Player Two</span>
+                        <span class="icon is-small">
+                          <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                      </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                      <div class="dropdown-content">
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <div class="tile is-parent">
+              <article class="tile is-child notification is-light">
+                <p class="title">Wide tile</p>
+                <p class="subtitle">Aligned with the right tile</p>
+                <div class="content">
+                  <div class="buttons has-addons">
+                    <button class="button">Yes</button>
+                    <button class="button">Maybe</button>
+                    <button class="button is-danger is-selected">No</button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+          <div class="tile is-parent">
+            <article class="tile is-child notification is-success">
+              <div class="content">
+                <p class="subtitle">Competition results:</p>
+                <div class="content">
+                  <!-- Content -->
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section is-hidden" id="resultsSection">Results</section>
+    <section class="section is-hidden" id="resultsTreeSection">Tree of Results</section>
+    <section class="modals">
+      <div class="modal" id="notEnoughPlayersErr">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Error:</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <h4>At least two players must be added to start competition</h4>
+          </section>
+        </div>
+      </div>
+      <div class="modal" id="correctPlayersNumErr">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Error:</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <h4>The number of players must be an even number</h4>
+          </section>
+        </div>
+      </div>
+      <div class="modal" id="emptyPlayerAddErr">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Error:</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <h4>We cannot add a plyer without a name</h4>
+          </section>
+        </div>
+      </div>
+    </section>
+  
+  <script src="assets/scripts.js"></script>
+  <script src="scripts.js"></script>
+
+  </body>
+</html>
