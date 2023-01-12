@@ -9,6 +9,7 @@ const dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu');
 const resultsTable = document.querySelector('#tableSection');
 
 let playersListArr = [];
+let playersListArrShift = [];
 let goalsToWin = 6;
 let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
@@ -25,10 +26,34 @@ dropdownsOn.forEach(el => {
 
 dropdownsOff.forEach(el => {
     el.addEventListener('click', function(e) {
+        dropdownChosen = this.parentElement.getElementsByTagName('span');
+        dropdownChosen[0].innerText = e.target.innerText;
+        playersListArrShift = playersListArr.filter(el => el !== e.target.innerText);
+     
+        dropdownsOff.forEach(el => {
+
+            console.dir(el.parentElement.classList.contains('is-active'))
+            if (!el.parentElement.classList.contains('is-active')) {
+                element = el.firstElementChild;
+                console.log(element.firstElementChild);
+                while(element.firstElementChild) {
+                    element.removeChild(element.lastElementChild);
+                }
+
+                console.log(element);
+                console.log(element.parentElement)
+
+                playersListArrShift.forEach(item => {
+                    newListPlayer = document.createElement('A');
+                    newListPlayer.classList.add('dropdown-item');
+                    newListPlayer.append(item);
+                    element.appendChild(newListPlayer);
+                })
+            }
+        })
+
         el.parentElement.classList.remove('is-active');
         isDropdownActive = false;
-        console.log(e.target.innerText);
-        console.dir(this.parentElement);
         e.stopPropagation();
     })
 })
@@ -66,9 +91,6 @@ getPlayerField.addEventListener('keypress', (event) => {
     }
 });
 
-
-
-
 let getNewPlayer = () => {
     player = getPlayer.parentElement.firstElementChild.firstElementChild;
     createPlayersList(player);
@@ -98,16 +120,20 @@ startComp.addEventListener('click', function() {
 
         list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
 
-        list.forEach(li => {
-            playersListArr.forEach(item => {
-                newListPlayer = document.createElement('A');
-                newListPlayer.classList.add('dropdown-item');
-                newListPlayer.append(item);
-                li.appendChild(newListPlayer);
-            })
-        })
+        listForDropdown(list, playersListArr);
     }
 })
+
+let listForDropdown = (list, array) => {
+    list.forEach(li => {
+        array.forEach(item => {
+            newListPlayer = document.createElement('A');
+            newListPlayer.classList.add('dropdown-item');
+            newListPlayer.append(item);
+            li.appendChild(newListPlayer);
+        })
+    })
+}
 
 const createPlayersList = (player) => {
     if (player.value !== '') {
