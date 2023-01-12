@@ -1,4 +1,5 @@
 const getPlayer = document.querySelector('#add-player');
+const getPlayerField = document.querySelector('#playersCont .control');
 const ulPlayer = document.querySelector('#players-list');
 const startComp = document.querySelector('#startComp');
 const menuSwitch = document.querySelector('#menuSection ul');
@@ -14,18 +15,24 @@ let isDropdownActive = false;
 
 dropdownsOn.forEach(el => {
     el.addEventListener('click', function() {
-        if ( playersListArr.length !== 0) {
+        if ( playersListArr.length !== 0 && isDropdownActive === false) {
             el.classList.add('is-active');
-        } 
+            isDropdownActive = true;
+        }
     });
 })
 
 dropdownsOff.forEach(el => {
-    el.addEventListener('click', function() {
+    el.addEventListener('click', function(e) {
         el.parentElement.classList.remove('is-active');
-        el.stopPropagation();
+        isDropdownActive = false;
+        console.log(e.target.innerText);
+        console.dir(this.parentElement);
+        e.stopPropagation();
     })
 })
+
+
 
 menuSwitch.addEventListener('click', function(e) {
 
@@ -55,11 +62,20 @@ const menuActivator = () => {
 }
 
 getPlayer.addEventListener('click', function() {
-    player = getPlayer.parentElement.firstElementChild.firstElementChild;
+    getNewPlayer();
+})
 
+getPlayerField.addEventListener('keyUp', function() {
+    getNewPlayer();
+})
+
+
+
+let getNewPlayer = () => {
+    player = getPlayer.parentElement.firstElementChild.firstElementChild;
     createPlayersList(player);
     sectionVisibility(playersListVis, ulPlayer.parentElement);
-})
+}
 
 ulPlayer.addEventListener('click', function(e) {
     if (e.target.matches('button')) {
