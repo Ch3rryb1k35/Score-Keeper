@@ -31,9 +31,12 @@ dropdownsOn.forEach(el => {
 
 dropdownsOff.forEach(el => {
     el.addEventListener('click', function(e) {
-        dropdownChosen = this.parentElement.getElementsByTagName('span');console.log(this)
+        dropdownChosen = this.parentElement.getElementsByTagName('span');
         dropdownChosen[0].innerText = e.target.innerText;
         playersListArrShift = playersListArr.filter(el => el !== e.target.innerText);
+
+        choosenAttr = this.parentElement.querySelector('[is-choosen]');
+        choosenAttr.setAttribute('is-choosen', true);
      
         dropdownsOff.forEach(el => {
 
