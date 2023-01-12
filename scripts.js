@@ -7,6 +7,7 @@ const sections = document.querySelectorAll('section.section');
 const dropdownsOn = document.querySelectorAll('.dropdown');
 const dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu');
 const resultsTable = document.querySelector('#tableSection');
+const startRound = document.querySelector('#start');
 
 let playersListArr = [];
 let playersListArrShift = [];
@@ -14,6 +15,10 @@ let goalsToWin = 6;
 let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
 let isDropdownActive = false;
+
+startRound.addEventListener('click', function() {
+
+})
 
 dropdownsOn.forEach(el => {
     el.addEventListener('click', function() {
@@ -26,22 +31,18 @@ dropdownsOn.forEach(el => {
 
 dropdownsOff.forEach(el => {
     el.addEventListener('click', function(e) {
-        dropdownChosen = this.parentElement.getElementsByTagName('span');
+        dropdownChosen = this.parentElement.getElementsByTagName('span');console.log(this)
         dropdownChosen[0].innerText = e.target.innerText;
         playersListArrShift = playersListArr.filter(el => el !== e.target.innerText);
      
         dropdownsOff.forEach(el => {
 
-            console.dir(el.parentElement.classList.contains('is-active'))
             if (!el.parentElement.classList.contains('is-active')) {
+
                 element = el.firstElementChild;
-                console.log(element.firstElementChild);
                 while(element.firstElementChild) {
                     element.removeChild(element.lastElementChild);
                 }
-
-                console.log(element);
-                console.log(element.parentElement)
 
                 playersListArrShift.forEach(item => {
                     newListPlayer = document.createElement('A');

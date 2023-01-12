@@ -1,3 +1,7 @@
 .column {
     background-color: bisque;
 }
+
+#round-controls  button.button {
+    flex: 1 !important;
+}

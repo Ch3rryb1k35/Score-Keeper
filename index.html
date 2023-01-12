@@ -10,7 +10,7 @@
   <body>
     <div class="section" id="menuSection">
       <div class="container">
-        <div class="tabs">
+        <div class="tabs is-boxed">
           <ul>
             <li id="playersTab"><a>Players</a></li>
             <li class="is-active" id="compTab"><a>Round Score</a></li>
@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="tile is-ancestor">
-          <div class="tile is-vertical is-8">
+          <div class="tile is-vertical is-4">
             <div class="tile">
               <div class="tile is-parent is-vertical">
                 <article class="tile is-child notification is-primary">
@@ -59,12 +59,15 @@
                   <!-- <p class="subtitle">Top tile</p> -->
                   <div class="dropdown dropdowwn-players ">
                     <div class="dropdown-trigger">
-                      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                        <span>Choose the Player One</span>
-                        <span class="icon is-small">
-                          <i class="fas fa-angle-down" aria-hidden="true"></i>
-                        </span>
-                      </button>
+                      <div class="buttons has-addons">
+                        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" is-choosen="false">
+                          <span>Choose the Player</span>
+                          <span class="icon is-small">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                          </span>
+                        </button>
+                        <button class="button" disabled>+1</button>
+                      </div>
                     </div>
                     <div class="dropdown-menu" id="dropdown-menu1" role="menu">
                       <div class="dropdown-content">
@@ -77,12 +80,15 @@
                   <!-- <p class="subtitle">Bottom tile</p> -->
                   <div class="dropdown dropdowwn-players">
                     <div class="dropdown-trigger">
-                      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-                        <span>Choose the Player Two</span>
-                        <span class="icon is-small">
-                          <i class="fas fa-angle-down" aria-hidden="true"></i>
-                        </span>
-                      </button>
+                      <div class="buttons has-addons">
+                        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" is-choosen="false">
+                          <span>Choose the Player</span>
+                          <span class="icon is-small">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                          </span>
+                        </button>
+                        <button class="button" disabled>+1</button>
+                      </div>
                     </div>
                     <div class="dropdown-menu" id="dropdown-menu2" role="menu">
                       <div class="dropdown-content">
@@ -92,22 +98,20 @@
                 </article>
               </div>
             </div>
-            <div class="tile is-parent">
-              <article class="tile is-child notification is-light">
-                <p class="title">Wide tile</p>
-                <p class="subtitle">Aligned with the right tile</p>
-                <div class="content">
-                  <div class="buttons has-addons">
-                    <button class="button">Yes</button>
-                    <button class="button">Yes</button>
-                    <button class="button">Maybe</button>
-                    <button class="button is-danger is-selected">No</button>
-                  </div>
-                </div>
-              </article>
-            </div>
           </div>
-          <div class="tile is-parent">
+          <div class="tile is-parent is-4" id="round-controls">
+            <article class="tile is-child notification is-light has-text-centered">
+              <p class="subtitle">Round Score</p>
+              <p class="title score"><span class="player-one">0</span> / <span class="player-two" >0</span></p>
+              <div class="content">
+                <div class="buttons has-addons is-centered">
+                  <button class="button" id="start">Start</button>
+                  <button class="button is-danger is-selected" id="restart">Restart</button>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div class="tile is-parent is-4">
             <article class="tile is-child notification is-success">
               <div class="content">
                 <p class="subtitle">Competition results:</p>
