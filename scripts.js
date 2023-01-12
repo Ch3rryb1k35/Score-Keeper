@@ -1,11 +1,12 @@
 const getPlayer = document.querySelector('#add-player');
-const getPlayerField = document.querySelector('#playersCont .control');
+const getPlayerField = document.querySelector('#playersCont input');
 const ulPlayer = document.querySelector('#players-list');
 const startComp = document.querySelector('#startComp');
 const menuSwitch = document.querySelector('#menuSection ul');
 const sections = document.querySelectorAll('section.section');
 const dropdownsOn = document.querySelectorAll('.dropdown');
 const dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu');
+const resultsTable = document.querySelector('#tableSection');
 
 let playersListArr = [];
 let goalsToWin = 6;
@@ -32,8 +33,6 @@ dropdownsOff.forEach(el => {
     })
 })
 
-
-
 menuSwitch.addEventListener('click', function(e) {
 
     activeMenuEl.classList.remove('is-active');
@@ -57,24 +56,25 @@ menuSwitch.addEventListener('click', function(e) {
     sections[index].classList.remove('is-hidden');
 })
 
-const menuActivator = () => {
-
-}
-
 getPlayer.addEventListener('click', function() {
     getNewPlayer();
 })
 
-getPlayerField.addEventListener('keyUp', function() {
-    getNewPlayer();
-})
+getPlayerField.addEventListener('keypress', (event) => {
+    if (event.keyCode === 13) {
+        getNewPlayer();
+    }
+});
+
 
 
 
 let getNewPlayer = () => {
     player = getPlayer.parentElement.firstElementChild.firstElementChild;
     createPlayersList(player);
+    createPlayersTable(player);
     sectionVisibility(playersListVis, ulPlayer.parentElement);
+    player.value = '';
 }
 
 ulPlayer.addEventListener('click', function(e) {
@@ -95,19 +95,18 @@ startComp.addEventListener('click', function() {
         removeButtons.forEach(element => {
             element.classList.add('is-hidden');
         });
-    }
 
-    list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
+        list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
 
-    list.forEach(li => {
-        playersListArr.forEach(item => {
-            newListPlayer = document.createElement('A');
-            newListPlayer.classList.add('dropdown-item');
-            newListPlayer.append(item);
-            li.appendChild(newListPlayer);
+        list.forEach(li => {
+            playersListArr.forEach(item => {
+                newListPlayer = document.createElement('A');
+                newListPlayer.classList.add('dropdown-item');
+                newListPlayer.append(item);
+                li.appendChild(newListPlayer);
+            })
         })
-    })
-
+    }
 })
 
 const createPlayersList = (player) => {
@@ -119,10 +118,28 @@ const createPlayersList = (player) => {
         liPlayer.append(liButton);
         ulPlayer.append(liPlayer);
         playersListArr.push(player.value);
-        player.value = '';
+
     } else {
         document.querySelector('#emptyPlayerAddErr').classList.add('is-active');
     }
+}
+
+const createPlayersTable = (player) => {
+    tr = document.createElement('TR');
+    for (let i = 1; i < 9; i++ ) {
+        if (i == 1) {
+            th = document.createElement('TH');
+            th.append(playersListArr.length);
+            tr.appendChild(th);
+        } else {
+            td = document.createElement('TD');
+            let cont = (i === 2) ? player.value : (i === 8) ? 'Enter the Qualification' : '0';
+    
+            td.append(cont);
+            tr.appendChild(td); 
+        }
+    }
+    resultsTable.children[0].appendChild(tr);
 }
 
 const checkNumPlayers = () => {
