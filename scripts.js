@@ -8,6 +8,7 @@ const dropdownsOn = document.querySelectorAll('.dropdown');
 const dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu');
 const resultsTable = document.querySelector('#tableSection');
 const startRound = document.querySelector('#start');
+const choosenButtons = document.querySelectorAll('.buttons.has-addons');
 
 let playersListArr = [];
 let playersListArrShift = [];
@@ -17,7 +18,10 @@ let playersListVis = false;
 let isDropdownActive = false;
 
 startRound.addEventListener('click', function() {
-
+    choosenButtons.forEach(el => {
+        el.querySelector('[is-choosen]').setAttribute('disabled', '');
+        el.querySelector('.counter').removeAttribute('disabled');
+    })
 })
 
 dropdownsOn.forEach(el => {
