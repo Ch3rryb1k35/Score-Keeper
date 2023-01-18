@@ -12,6 +12,7 @@ const choosenButtons = document.querySelectorAll('.dropdowwn-players .buttons.ha
 
 let playersListArr = [];
 let playersListArrShift = [];
+let resultsObject = [];
 let goalsToWin = 6;
 let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
@@ -20,23 +21,18 @@ let isPlayerSelected = false;
 
 startRound.addEventListener('click', function() {
     
-    y = beforeStartCheck();
-// console.log(y);
-    if (isPlayerSelected) {
+    if (!beforeStartCheck()) {
         choosenButtons.forEach(el => {
             el.querySelector('button[is-choosen]').setAttribute('disabled', '');
             el.querySelector('.counter').removeAttribute('disabled');
         })
-    } 
-    // if(!isPlayerSelected) {
-    //     document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
-    //     return false;
-    // }
-})
+    } else {
+        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
+        return false;
+    }
 
-const isTrue = (el) => {
-    el === true;
-}
+    startRound.setAttribute('disabled', '');
+})
 
 const beforeStartCheck = () => {
     const isChoosenPlayers = [];
@@ -48,9 +44,8 @@ const beforeStartCheck = () => {
             isChoosenPlayers.push(false);
         }
     })
-    console.log(isChoosenPlayers);
-    e = isChoosenPlayers.includes(false);
-    console.log(e);
+
+    return result = isChoosenPlayers.includes(false);
 }
 
 
@@ -133,7 +128,9 @@ getPlayerField.addEventListener('keypress', (event) => {
 let getNewPlayer = () => {
     player = getPlayer.parentElement.firstElementChild.firstElementChild;
     createPlayersList(player);
-    createPlayersTable(player);
+    if (player.value.length !== 0) { 
+        createPlayersTable(player);
+    }
     sectionVisibility(playersListVis, ulPlayer.parentElement);
     player.value = '';
 }
@@ -162,7 +159,23 @@ startComp.addEventListener('click', function() {
         listForDropdown(list, playersListArr);
         startComp.setAttribute('disabled', '');
     }
+
+    createResultsArray(playersListArr, resultsObject);
 })
+
+let createResultsArray = (array, object) => {
+    for (let i = 0; i < array.length; i++) {
+        info = {};
+        info.name = array[i];
+        info.playedRounds = 0;
+        info.wins = 0;
+        info.drawn = 0;
+        info.lose = 0;
+        info.points = 0;
+        info.level = 'Enter the Qualification';
+        object.push(info);
+    }
+}
 
 let listForDropdown = (list, array) => {
     list.forEach(li => {
@@ -176,7 +189,8 @@ let listForDropdown = (list, array) => {
 }
 
 const createPlayersList = (player) => {
-    if (player.value !== '') {
+
+    if (player.value.length !== 0) {
         liPlayer = document.createElement('LI');
         liPlayer.append(player.value);
         liButton = document.createElement('BUTTON');
@@ -187,6 +201,7 @@ const createPlayersList = (player) => {
 
     } else {
         document.querySelector('#emptyPlayerAddErr').classList.add('is-active');
+        return false;
     }
 }
 
