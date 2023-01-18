@@ -37,7 +37,7 @@
       </div>
       <div class="container is-hidden players-list p-2">
         <h3 class="mb-3">Tournament Participants:</h3>
-        <ul id="players-list" class="pb-4">
+        <ul id="players-list" class="pb-4 is-hoverable">
           
         </ul>
         <button class="button is-success is-small" id="startComp">Start competition</button>
@@ -100,9 +100,10 @@
             </div>
           </div>
           <div class="tile is-parent is-4" id="round-controls">
-            <article class="tile is-child notification is-light has-text-centered">
-              <p class="subtitle">Round Score</p>
-              <p class="title score"><span class="player-one">0</span> / <span class="player-two" >0</span></p>
+            <article class="tile is-child notification is-light ">
+              <p class="title has-text-centered mb-4">Round Score</p>
+              <p class="title score" class="player-one">Player One: <span>0</span></p>
+              <p class="title score" class="player-two">Player Two: <span>0</span></p>
               <div class="content">
                 <div class="buttons has-addons is-centered">
                   <button class="button" id="start">Start</button>
@@ -188,6 +189,18 @@
           </header>
           <section class="modal-card-body">
             <h4>We cannot add a plyer without a name</h4>
+          </section>
+        </div>
+      </div>
+      <div class="modal" id="startRoundWithOnePlayer">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">Error:</p>
+            <button class="delete" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <h4>Please add one more player to start round</h4>
           </section>
         </div>
       </div>

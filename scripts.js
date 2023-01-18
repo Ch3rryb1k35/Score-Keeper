@@ -8,7 +8,7 @@ const dropdownsOn = document.querySelectorAll('.dropdown');
 const dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu');
 const resultsTable = document.querySelector('#tableSection');
 const startRound = document.querySelector('#start');
-const choosenButtons = document.querySelectorAll('.buttons.has-addons');
+const choosenButtons = document.querySelectorAll('.dropdowwn-players .buttons.has-addons');
 
 let playersListArr = [];
 let playersListArrShift = [];
@@ -16,13 +16,33 @@ let goalsToWin = 6;
 let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
 let isDropdownActive = false;
+let isPlayerSelected = false;
 
 startRound.addEventListener('click', function() {
-    choosenButtons.forEach(el => {
-        el.querySelector('[is-choosen]').setAttribute('disabled', '');
-        el.querySelector('.counter').removeAttribute('disabled');
-    })
+    
+    beforeStartCheck();
+
+    if (isPlayerSelected) {
+        choosenButtons.forEach(el => {
+            el.querySelector('button[is-choosen]').setAttribute('disabled', '');
+            el.querySelector('.counter').removeAttribute('disabled');
+        })
+    } 
+    if(!isPlayerSelected) {
+        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
+        return false;
+    }
 })
+
+const beforeStartCheck = () => {
+    choosenButtons.forEach(el => {
+        if (el.querySelector('[is-choosen]').getAttribute('is-choosen') === 'true') {
+            isPlayerSelected =  true;
+        } else {
+            isPlayerSelected = false;
+        }
+    })
+}
 
 dropdownsOn.forEach(el => {
     el.addEventListener('click', function() {
@@ -129,6 +149,7 @@ startComp.addEventListener('click', function() {
         list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
 
         listForDropdown(list, playersListArr);
+        startComp.setAttribute('disabled', '');
     }
 })
 
@@ -184,7 +205,8 @@ const checkNumPlayers = () => {
     if (playersListArr.length % 2 != 0 ) {
         document.querySelector('#correctPlayersNumErr').classList.add('is-active');
         return false;
-    } else {
+    } 
+    else {
         return true;
     }
 }
