@@ -20,29 +20,40 @@ let isPlayerSelected = false;
 
 startRound.addEventListener('click', function() {
     
-    beforeStartCheck();
-
+    y = beforeStartCheck();
+// console.log(y);
     if (isPlayerSelected) {
         choosenButtons.forEach(el => {
             el.querySelector('button[is-choosen]').setAttribute('disabled', '');
             el.querySelector('.counter').removeAttribute('disabled');
         })
     } 
-    if(!isPlayerSelected) {
-        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
-        return false;
-    }
+    // if(!isPlayerSelected) {
+    //     document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
+    //     return false;
+    // }
 })
 
+const isTrue = (el) => {
+    el === true;
+}
+
 const beforeStartCheck = () => {
+    const isChoosenPlayers = [];
+
     choosenButtons.forEach(el => {
         if (el.querySelector('[is-choosen]').getAttribute('is-choosen') === 'true') {
-            isPlayerSelected =  true;
+            isChoosenPlayers.push(true);
         } else {
-            isPlayerSelected = false;
+            isChoosenPlayers.push(false);
         }
     })
+    console.log(isChoosenPlayers);
+    e = isChoosenPlayers.includes(false);
+    console.log(e);
 }
+
+
 
 dropdownsOn.forEach(el => {
     el.addEventListener('click', function() {
