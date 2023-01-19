@@ -11,6 +11,7 @@ const startRound = document.querySelector('#start');
 const choosenButtons = document.querySelectorAll('.dropdowwn-players .buttons.has-addons');
 const playerLabels = document.querySelectorAll('.player-label');
 const counterPlus = document.querySelectorAll('button.counter');
+const goalsNumber = document.querySelector('#goals-number');
 
 let playersListArr = [];
 let playersListArrShift = [];
@@ -21,11 +22,18 @@ let playersListVis = false;
 let isDropdownActive = false;
 let isPlayerSelected = false;
 
+goalsNumber.addEventListener('click', function(e) {
+    e.preventDefault();
+    goalsToWin = this.form[0].value;
+})
+
 counterPlus.forEach(el => {
     el.addEventListener('click', function(e) {
         element = e.target.parentElement.parentElement.parentElement.parentElement.querySelector('.player-label > span').innerText;
         element++;
         e.target.parentElement.parentElement.parentElement.parentElement.querySelector('.player-label > span').innerText = element;
+
+
         e.stopPropagation();
     })
 })
@@ -48,6 +56,7 @@ startRound.addEventListener('click', function() {
         el.appendChild(span);
     })
 
+    goalsNumber.setAttribute('disabled', '');
     startRound.setAttribute('disabled', '');
 })
 
@@ -192,6 +201,7 @@ let createResultsArray = (array, object) => {
         info.level = 'Enter the Qualification';
         object.push(info);
     }
+
 }
 
 let listForDropdown = (list, array) => {

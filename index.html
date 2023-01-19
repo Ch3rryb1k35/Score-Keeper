@@ -24,6 +24,34 @@
       <div class="container px-2 py-4">
         <div class="container px-2 py-4" id="playersCont">
           <div class="tile is-ancestor">
+            
+            <div class="tile is-parent is-vertical">
+              <p class="mb-2">Set number of goals to win:</p>
+              <form action="">
+                <div class="field has-addons">
+                  <div class="control is-expanded">
+                    <div class="select is-fullwidth">
+                      <select name="goals">
+                        <option value="6">6</option>
+                        <option value="8">8</option>
+                        <option value="10">10</option>
+                        <option value="12">12</option>
+                        <option value="14">14</option>
+                        <option value="16">16</option>
+                        <option value="18">18</option>
+                        <option value="20">20</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <button type="submit" class="button is-primary mb-2" id="goals-number">Set</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="tile is-ancestor">
+            
             <div class="tile is-parent is-vertical">
               <!-- <div class="tile is-child"></div> -->
               <h3 class="mb-3">Add players at the form below (you can use the Enter key):</h3>
@@ -54,11 +82,8 @@
         
         <div class="tile is-ancestor">
           <div class="tile is-vertical is-parent is-4">
-
-
                 <div class="tile is-child notification is-primary">
                   <p class="title player-label">Player One: </p>
-                  <!-- <p class="subtitle">Top tile</p> -->
                   <div class="dropdown dropdowwn-players ">
                     <div class="dropdown-trigger">
                       <div class="buttons has-addons">
@@ -69,6 +94,7 @@
                           </span>
                         </button>
                         <button class="button counter" disabled>+1</button>
+
                       </div>
                     </div>
                     <div class="dropdown-menu" id="dropdown-menu1" role="menu">
@@ -105,12 +131,19 @@
           <div class="tile is-parent is-4" id="round-controls">
             <article class="tile is-child notification is-light ">
               <p class="title has-text-centered mb-4">Round Controls</p>
+              
+
+
+              
               <div class="content">
                 <div class="buttons has-addons is-centered">
-                  <button class="button" id="start">Start</button>
-                  <button class="button is-danger is-selected" id="restart">Restart</button>
+                  <button class="button is-fullwidth" id="start">Start round</button>
+                  <button class="button is-fullwidth is-danger is-selected" id="restart">Restart round</button>
+                  <button class="button is-fullwidth is-danger has-background-primary-dark" id="next-round">Next Round</button>
                 </div>
               </div>
+
+
             </article>
           </div>
           <div class="tile is-parent is-4">
