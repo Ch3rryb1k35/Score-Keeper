@@ -12,8 +12,7 @@
       <div class="container">
         <div class="tabs is-boxed">
           <ul>
-            <li class="is-active" id="playersTab"><a>Players</a></li>
-            <li id="compTab"><a>Round Score</a></li>
+            <li class="is-active" id="compTab"><a>Round Score</a></li>
             <li id="resultsTab"><a>Results</a></li>
             <li id="treeResultsTab"><a>Tree of Results</a></li>
             <li id="tableTab"><a>Table with Results</a></li>
@@ -21,37 +20,32 @@
         </div>
       </div>
     </div>
-    <section class="section" id="addPlayersSection">
-      <div class="container px-2 py-4" id="playersCont">
-        <h3 class="mb-3">Add players at the form below (you can use the Enter key):</h3>
-        <div class="field has-addons mb-4">
-          <div class="control is-expanded">
-            <input class="input" type="text" placeholder="Enter Name and Firstname">
-          </div>
-          <div class="control" id="add-player">
-            <a class="button is-info">
-              Add Player
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="container is-hidden players-list p-2">
-        <h3 class="mb-3">Tournament Participants:</h3>
-        <ul id="players-list" class="pb-4 is-hoverable">
-          
-        </ul>
-        <button class="button is-success is-small" id="startComp">Start competition</button>
-      </div>
-    </section>
-    <section class="section is-hidden" id="compSection">
+    <section class="section" id="compSection">
       <div class="container px-2 py-4">
-
-        <div class="tile is-ancestor">
-          <div class="tile is-parent">
-            <div class="tile is-child"></div>
+        <div class="container px-2 py-4" id="playersCont">
+          <div class="tile is-ancestor">
+            <div class="tile is-parent is-vertical">
+              <!-- <div class="tile is-child"></div> -->
+              <h3 class="mb-3">Add players at the form below (you can use the Enter key):</h3>
+              <div class="field has-addons mb-4">
+                <div class="control is-expanded">
+                  <input class="input" type="text" placeholder="Enter Name and Firstname">
+                </div>
+                <div class="control" id="add-player">
+                  <a class="button is-info">
+                    Add Player
+                  </a>
+                </div>
+                <div class="control" id="startComp" >
+                  <a class="button is-success">
+                    Start Competition
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
+  
         </div>
-
         <div class="columns">
           <div class="column">
             <h2 class="title">Please choose participants</h2>
@@ -59,11 +53,11 @@
         </div>
         
         <div class="tile is-ancestor">
-          <div class="tile is-vertical is-4">
-            <div class="tile">
-              <div class="tile is-parent is-vertical">
-                <article class="tile is-child notification is-primary">
-                  <p class="title">Player one:</p>
+          <div class="tile is-vertical is-parent is-4">
+
+
+                <div class="tile is-child notification is-primary">
+                  <p class="title player-label">Player One: </p>
                   <!-- <p class="subtitle">Top tile</p> -->
                   <div class="dropdown dropdowwn-players ">
                     <div class="dropdown-trigger">
@@ -82,9 +76,10 @@
                       </div>
                     </div>
                   </div>
-                </article>
+                </div>
+                
                 <article class="tile is-child notification is-warning">
-                  <p class="title">Player Two:</p>
+                  <p class="title player-label">Player Two: </p>
                   <!-- <p class="subtitle">Bottom tile</p> -->
                   <div class="dropdown dropdowwn-players">
                     <div class="dropdown-trigger">
@@ -104,14 +99,12 @@
                     </div>
                   </div>
                 </article>
-              </div>
-            </div>
+
+
           </div>
           <div class="tile is-parent is-4" id="round-controls">
             <article class="tile is-child notification is-light ">
-              <p class="title has-text-centered mb-4">Round Score</p>
-              <p class="title score" class="player-one">Player One: <span>0</span></p>
-              <p class="title score" class="player-two">Player Two: <span>0</span></p>
+              <p class="title has-text-centered mb-4">Round Controls</p>
               <div class="content">
                 <div class="buttons has-addons is-centered">
                   <button class="button" id="start">Start</button>
@@ -123,9 +116,13 @@
           <div class="tile is-parent is-4">
             <article class="tile is-child notification is-success">
               <div class="content">
-                <p class="subtitle">Competition results:</p>
+                <p class="subtitle">Participants:</p>
                 <div class="content">
-                  <!-- Content -->
+                  <div class="container is-hidden players-list p-2">
+                    <ul id="players-list" class="pb-4 is-hoverable">
+                      
+                    </ul>
+                  </div>
                 </div>
               </div>
             </article>

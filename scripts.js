@@ -9,6 +9,8 @@ const dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu');
 const resultsTable = document.querySelector('#tableSection');
 const startRound = document.querySelector('#start');
 const choosenButtons = document.querySelectorAll('.dropdowwn-players .buttons.has-addons');
+const playerLabels = document.querySelectorAll('.player-label');
+const counterPlus = document.querySelectorAll('button.counter');
 
 let playersListArr = [];
 let playersListArrShift = [];
@@ -18,6 +20,15 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
 let isDropdownActive = false;
 let isPlayerSelected = false;
+
+counterPlus.forEach(el => {
+    el.addEventListener('click', function(e) {
+        element = e.target.parentElement.parentElement.parentElement.parentElement.querySelector('.player-label > span').innerText;
+        element++;
+        e.target.parentElement.parentElement.parentElement.parentElement.querySelector('.player-label > span').innerText = element;
+        e.stopPropagation();
+    })
+})
 
 startRound.addEventListener('click', function() {
     
@@ -30,6 +41,12 @@ startRound.addEventListener('click', function() {
         document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
         return false;
     }
+
+    playerLabels.forEach(el => {
+        span = document.createElement('SPAN');
+        span.innerText = '0';
+        el.appendChild(span);
+    })
 
     startRound.setAttribute('disabled', '');
 })
