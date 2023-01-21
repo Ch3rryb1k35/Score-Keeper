@@ -19,6 +19,7 @@ let roundParticipants = [];
 let resultsObject = {};
 let goalsToWin = 6;
 let numbrOfStages = {};
+let randMatches = [];
 let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
 let isDropdownActive = false;
@@ -204,7 +205,7 @@ startComp.addEventListener('click', function() {
             listForDropdown(list, playersListArr);
         }
         else {
-            console.log('jfbjkf')
+            randomOrder(playersListArr, randMatches);
         }
 
         startComp.setAttribute('disabled', '');
@@ -214,6 +215,21 @@ startComp.addEventListener('click', function() {
 
     createResultsArray(playersListArr, resultsObject);
 })
+
+let randomOrder = (array, object) => {
+    arrlength = array.length
+    for(let i = 0; i <= arrlength*2-1; i++) {
+        let round = `${i}`; 
+        object[round] = [array[i], array[i+1]];
+        if ( i == arrlength -1 ) {
+            object[round] = [array[i], array[0]];
+        }
+        
+    }
+    console.log(object);
+}
+
+
 
 let createResultsArray = (array, object) => {
     for (let i = 0; i < array.length; i++) {
