@@ -14,6 +14,8 @@ const counterPlus = document.querySelectorAll('button.counter.plus');
 const counterMinus = document.querySelectorAll('button.counter.minus');
 const goalsNumber = document.querySelector('#goals-number');
 const playerCounters = document.querySelectorAll('.player-label > span');
+const nextRound = document.querySelector('#next-round');
+
 const firstOrderArr = [];
 const secondOrderArr = [];
 
@@ -33,7 +35,7 @@ let isPlayerSelected = false;
 let playerCounter = () => {
     playerCounters.forEach(el => {
         el.addEventListener('click', function() {
-            console.log(el)
+
         })
     })
 }
@@ -49,7 +51,7 @@ let funcNumberStages = () => {
     counter = 1;
     while (num > 3) {
         num = Math.round(num / 2);
-        if (num == 1 || num ==2 ) { break; }
+        if (num == 1 ) { break; }
         numbrOfStages[counter] = num;
         counter++;
     }
@@ -68,9 +70,25 @@ const evenCompSingleWin = (name) => {
     resultsObject[name].wins = resultsObject[name].wins + 1;
     
     roundParticipants = roundParticipants.filter(el => el !== name);
-    
+    playersListArr = playersListArr.filter(el => el !== name);
+    playersListArrShift = playersListArrShift.filter(el => el !== name);
     evenCompSingleLost(roundParticipants);
+
+    nextRound.removeAttribute('disabled');
 }
+
+nextRound.addEventListener('click', () => {
+    dropdownsOn.forEach(el => {
+        el.querySelector('.button').removeAttribute('disabled');
+        el.querySelector('.button').setAttribute('is-choosen', false);
+    });
+
+    dropdownsOff.forEach(el => {
+        element = el.children[0];
+        funcUpdateDropdownList(element);
+    })
+    // funcUpdateDropdownList(dropdownsOff.querySelector);
+})
 
 const evenCompSingleLost = (array) => {
     resultsObject[array[0]].playedRounds = resultsObject[array[0]].playedRounds + 1;
@@ -79,6 +97,9 @@ const evenCompSingleLost = (array) => {
     if (numbrOfStages.length == 1) {
         resultsObject[array[0]].level = 'Disqualified';
     }
+    playersListArr = playersListArr.filter(el => el !== array[0]);
+    playersListArrShift = playersListArrShift.filter(el => el !== array[0]);
+    console.log(playersListArr);
 }
 
 counterPlus.forEach(el => {
@@ -118,7 +139,7 @@ startRound.addEventListener('click', function() {
             roundParticipants.push(player);
 
             playerName = el.children[0].innerText;
-            console.log(el.closest('.player-box').querySelector('.player-name'));
+
             el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
             el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
 
@@ -173,16 +194,8 @@ dropdownsOff.forEach(el => {
             if (!el.parentElement.classList.contains('is-active')) {
 
                 element = el.firstElementChild;
-                while(element.firstElementChild) {
-                    element.removeChild(element.lastElementChild);
-                }
 
-                playersListArrShift.forEach(item => {
-                    newListPlayer = document.createElement('A');
-                    newListPlayer.classList.add('dropdown-item');
-                    newListPlayer.append(item);
-                    element.appendChild(newListPlayer);
-                })
+                funcUpdateDropdownList(element);
             }
         })
 
@@ -191,6 +204,19 @@ dropdownsOff.forEach(el => {
         e.stopPropagation();
     })
 })
+
+let funcUpdateDropdownList = (element) => {
+    while(element.firstElementChild) {
+        element.removeChild(element.lastElementChild);
+    }
+
+    playersListArrShift.forEach(item => {
+        newListPlayer = document.createElement('A');
+        newListPlayer.classList.add('dropdown-item');
+        newListPlayer.append(item);
+        element.appendChild(newListPlayer);
+    })
+}
 
 menuSwitch.addEventListener('click', function(e) {
 
@@ -280,7 +306,6 @@ let createOrder = (array, object) => {
         secondOrderArr[i] = array[i+1];
         if (i == arrlength-1) { secondOrderArr[i] = array[0]; }
     }
-console.log(firstOrderArr, secondOrderArr);
 }
 
 
