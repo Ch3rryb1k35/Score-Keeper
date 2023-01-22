@@ -10,8 +10,12 @@ const resultsTable = document.querySelector('#tableSection');
 const startRound = document.querySelector('#start');
 const choosenButtons = document.querySelectorAll('.dropdowwn-players .buttons.has-addons');
 const playerLabels = document.querySelectorAll('.player-label');
-const counterPlus = document.querySelectorAll('button.counter');
+const counterPlus = document.querySelectorAll('button.counter.plus');
+const counterMinus = document.querySelectorAll('button.counter.minus');
 const goalsNumber = document.querySelector('#goals-number');
+const playerCounters = document.querySelectorAll('.player-label > span');
+const firstOrderArr = [];
+const secondOrderArr = [];
 
 let playersListArr = [];
 let playersListArrShift = [];
@@ -24,6 +28,15 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
 let isDropdownActive = false;
 let isPlayerSelected = false;
+
+
+let playerCounter = () => {
+    playerCounters.forEach(el => {
+        el.addEventListener('click', function() {
+            console.log(el)
+        })
+    })
+}
 
 goalsNumber.addEventListener('click', function(e) {
     e.preventDefault();
@@ -43,14 +56,32 @@ let funcNumberStages = () => {
     }
 }
 
+const evenCompSingleWin = () => {
+    
+}
+
 counterPlus.forEach(el => {
     el.addEventListener('click', function(e) {
-        element = e.target.parentElement.parentElement.parentElement.parentElement.querySelector('.player-label > span').innerText;
+
+        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
 
         element++;
-        e.target.parentElement.parentElement.parentElement.parentElement.querySelector('.player-label > span').innerText = element;
 
-        e.stopPropagation();
+        if(element == goalsToWin ) {
+            console.log("Winner")
+        }
+
+        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+    })
+})
+
+counterMinus.forEach(el => {
+    el.addEventListener('click', function(e) {
+
+        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
+
+        element--;
+        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
     })
 })
 
@@ -60,19 +91,21 @@ startRound.addEventListener('click', function() {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
             roundParticipants.push(player);
-        
+
+            playerName = el.children[0].innerText;
+            console.log(el.closest('.player-box').querySelector('.player-name'));
+            el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
+            el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
+
             el.querySelector('button[is-choosen]').setAttribute('disabled', '');
-            el.querySelector('.counter').removeAttribute('disabled');
         })
     } else {
         document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
         return false;
     }
-
-    playerLabels.forEach(el => {
-        span = document.createElement('SPAN');
-        span.innerText = '0';
-        el.appendChild(span);
+    
+    document.querySelectorAll(".player-box .counter").forEach(el => {
+        el.removeAttribute('disabled');
     })
 
     startRound.setAttribute('disabled', '');
@@ -205,7 +238,7 @@ startComp.addEventListener('click', function() {
             listForDropdown(list, playersListArr);
         }
         else {
-            randomOrder(playersListArr, randMatches);
+            createOrder(playersListArr, randMatches);
         }
 
         startComp.setAttribute('disabled', '');
@@ -216,17 +249,15 @@ startComp.addEventListener('click', function() {
     createResultsArray(playersListArr, resultsObject);
 })
 
-let randomOrder = (array, object) => {
-    arrlength = array.length
-    for(let i = 0; i <= arrlength*2-1; i++) {
-        let round = `${i}`; 
-        object[round] = [array[i], array[i+1]];
-        if ( i == arrlength -1 ) {
-            object[round] = [array[i], array[0]];
-        }
-        
+let createOrder = (array, object) => {
+    arrlength = array.length;
+
+    for(let i = 0; i <= arrlength-1; i++) {
+        firstOrderArr[i] = array[i];
+        secondOrderArr[i] = array[i+1];
+        if (i == arrlength-1) { secondOrderArr[i] = array[0]; }
     }
-    console.log(object);
+console.log(firstOrderArr, secondOrderArr);
 }
 
 
@@ -318,3 +349,5 @@ const sectionVisibility = (v, el) => {
     }
 }
 
+console.log(numbrOfStages);
+console.log(resultsObject);
