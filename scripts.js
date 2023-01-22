@@ -59,8 +59,26 @@ const evenCompSingleWin = (name) => {
     document.querySelectorAll(".player-box .counter").forEach(el => {
         el.setAttribute('disabled', '');
     })
+
+    if (numbrOfStages.length == 1) {
+        resultsObject[name].level = 'Winner!';
+    }
+
+    resultsObject[name].playedRounds = resultsObject[name].playedRounds + 1;
+    resultsObject[name].wins = resultsObject[name].wins + 1;
     
-    console.log(name)
+    roundParticipants = roundParticipants.filter(el => el !== name);
+    
+    evenCompSingleLost(roundParticipants);
+}
+
+const evenCompSingleLost = (array) => {
+    resultsObject[array[0]].playedRounds = resultsObject[array[0]].playedRounds + 1;
+    resultsObject[array[0]].lose = resultsObject[array[0]].lose + 1;
+    resultsObject[array[0]].level = resultsObject[array[0]].level + 1;
+    if (numbrOfStages.length == 1) {
+        resultsObject[array[0]].level = 'Disqualified';
+    }
 }
 
 counterPlus.forEach(el => {
@@ -71,14 +89,13 @@ counterPlus.forEach(el => {
         playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
         
         playerName = playerEl.slice(0, -2);
-        
+        resultsObject[playerName].points = element;
+
         if(element == goalsToWin ) {
             console.log("Winner");
             evenCompSingleWin(playerName);
         }
-
-        resultsObject[playerName].points = element;
-        
+          
         e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
     })
 })
