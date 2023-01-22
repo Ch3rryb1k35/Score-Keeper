@@ -22,7 +22,7 @@ let playersListArrShift = [];
 let roundParticipants = [];
 let resultsObject = {};
 let goalsToWin = 6;
-let numbrOfStages = {};
+let numbrOfStages = [];
 let randMatches = [];
 let activeMenuEl = document.querySelector('#menuSection li.is-active');
 let playersListVis = false;
@@ -44,8 +44,7 @@ goalsNumber.addEventListener('click', function(e) {
 })
 
 let funcNumberStages = () => {
-    numbrOfStages['Enter the Qualification'] = playersListArr.length;
-    numbrOfStages['Final'] = 2;
+    numbrOfStages[0] = playersListArr.length;
     num = playersListArr.length;
     counter = 1;
     while (num > 3) {
@@ -56,21 +55,30 @@ let funcNumberStages = () => {
     }
 }
 
-const evenCompSingleWin = () => {
+const evenCompSingleWin = (name) => {
+    document.querySelectorAll(".player-box .counter").forEach(el => {
+        el.setAttribute('disabled', '');
+    })
     
+    console.log(name)
 }
 
 counterPlus.forEach(el => {
     el.addEventListener('click', function(e) {
-
         element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
-
         element++;
 
+        playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
+        
+        playerName = playerEl.slice(0, -2);
+        
         if(element == goalsToWin ) {
-            console.log("Winner")
+            console.log("Winner");
+            evenCompSingleWin(playerName);
         }
 
+        resultsObject[playerName].points = element;
+        
         e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
     })
 })
@@ -124,8 +132,6 @@ const beforeStartCheck = () => {
 
     return result = isChoosenPlayers.includes(false);
 }
-
-
 
 dropdownsOn.forEach(el => {
     el.addEventListener('click', function() {
@@ -351,3 +357,4 @@ const sectionVisibility = (v, el) => {
 
 console.log(numbrOfStages);
 console.log(resultsObject);
+console.log()
