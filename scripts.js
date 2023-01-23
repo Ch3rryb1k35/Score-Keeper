@@ -1,3 +1,7 @@
+/**
+ * Different types of elements on page that cannot be changed
+ */
+
 const getPlayer = document.querySelector('#add-player');
 const getPlayerField = document.querySelector('#playersCont input');
 const ulPlayer = document.querySelector('#players-list');
@@ -15,6 +19,12 @@ const counterMinus = document.querySelectorAll('button.counter.minus');
 const goalsNumber = document.querySelector('#goals-number');
 const playerCounters = document.querySelectorAll('.player-label > span');
 const nextRound = document.querySelector('#next-round');
+let activeMenuEl = document.querySelector('#menuSection li.is-active');
+
+
+/**
+ * Variables and arrays
+ */
 
 const firstOrderArr = [];
 const secondOrderArr = [];
@@ -23,28 +33,26 @@ let playersListArr = [];
 let playersListArrShift = [];
 let roundParticipants = [];
 let resultsObject = {};
-let goalsToWin = 6;
+let goalsToWin = 2;
 let numbrOfStages = [];
 let randMatches = [];
-let activeMenuEl = document.querySelector('#menuSection li.is-active');
+
+/**
+ * Boolean Switchers
+ */
 let playersListVis = false;
 let isDropdownActive = false;
 let isPlayerSelected = false;
 
+/**
+ * Functions
+ */
 
-let playerCounter = () => {
-    playerCounters.forEach(el => {
-        el.addEventListener('click', function() {
-
-        })
-    })
-}
-
-goalsNumber.addEventListener('click', function(e) {
-    e.preventDefault();
-    goalsToWin = this.form[0].value;
-})
-
+/**
+ * Function funcNumberStages 
+ * creates an array with the number of rounrs
+ * based on the number of players
+ */
 let funcNumberStages = () => {
     numbrOfStages[0] = playersListArr.length;
     num = playersListArr.length;
@@ -57,6 +65,22 @@ let funcNumberStages = () => {
     }
 }
 
+/**
+ * Function evenCompSingleWin
+ * 
+ * fire when one of players got the required number of goals 
+ * must get a variable with player name
+ * 
+ * disable +1 an -1 buttons
+ * if stage has only 2 players define a winner
+ * add the results of round to the resultsObject 
+ * define player that lost, fire the function that add results for the resultsObject
+ * 
+ * remove played participants from arrays that contains round and stage players
+ * 
+ * undisable the next round button
+ * 
+ */
 const evenCompSingleWin = (name) => {
     document.querySelectorAll(".player-box .counter").forEach(el => {
         el.setAttribute('disabled', '');
@@ -68,28 +92,25 @@ const evenCompSingleWin = (name) => {
 
     resultsObject[name].playedRounds = resultsObject[name].playedRounds + 1;
     resultsObject[name].wins = resultsObject[name].wins + 1;
-    
     roundParticipants = roundParticipants.filter(el => el !== name);
-    playersListArr = playersListArr.filter(el => el !== name);
+    playersListArr = playersListArr.filter(el => el !== name);  
     playersListArrShift = playersListArrShift.filter(el => el !== name);
+    
     evenCompSingleLost(roundParticipants);
 
     nextRound.removeAttribute('disabled');
 }
 
-nextRound.addEventListener('click', () => {
-    dropdownsOn.forEach(el => {
-        el.querySelector('.button').removeAttribute('disabled');
-        el.querySelector('.button').setAttribute('is-choosen', false);
-    });
-
-    dropdownsOff.forEach(el => {
-        element = el.children[0];
-        funcUpdateDropdownList(element);
-    })
-    // funcUpdateDropdownList(dropdownsOff.querySelector);
-})
-
+/**
+ * Function evenCompSingleLost
+ * 
+ * usually used right after evenCompSingleWin function
+ * save the player that lost results to the resultsObject
+ * 
+ * remove played participants from arrays that contains round and stage players
+ * empty the roundParticipants array
+ *  
+ */
 const evenCompSingleLost = (array) => {
     resultsObject[array[0]].playedRounds = resultsObject[array[0]].playedRounds + 1;
     resultsObject[array[0]].lose = resultsObject[array[0]].lose + 1;
@@ -99,64 +120,16 @@ const evenCompSingleLost = (array) => {
     }
     playersListArr = playersListArr.filter(el => el !== array[0]);
     playersListArrShift = playersListArrShift.filter(el => el !== array[0]);
-    console.log(playersListArr);
+    roundParticipants = [];
 }
 
-counterPlus.forEach(el => {
-    el.addEventListener('click', function(e) {
-        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
-        element++;
-
-        playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
-        
-        playerName = playerEl.slice(0, -2);
-        resultsObject[playerName].points = element;
-
-        if(element == goalsToWin ) {
-            console.log("Winner");
-            evenCompSingleWin(playerName);
-        }
-          
-        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
-    })
-})
-
-counterMinus.forEach(el => {
-    el.addEventListener('click', function(e) {
-
-        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
-
-        element--;
-        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
-    })
-})
-
-startRound.addEventListener('click', function() {
-    
-    if (!beforeStartCheck()) {
-        choosenButtons.forEach(el => {
-            player = el.querySelector('button[is-choosen] span').innerText;
-            roundParticipants.push(player);
-
-            playerName = el.children[0].innerText;
-
-            el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
-            el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
-
-            el.querySelector('button[is-choosen]').setAttribute('disabled', '');
-        })
-    } else {
-        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
-        return false;
-    }
-    
-    document.querySelectorAll(".player-box .counter").forEach(el => {
-        el.removeAttribute('disabled');
-    })
-
-    startRound.setAttribute('disabled', '');
-})
-
+/**
+ *  Function beforeStartCheck
+ * 
+ *  Check if the players is selected in the dropdown menus
+ *  if all selected returns true, else - false
+ *
+ */
 const beforeStartCheck = () => {
     const isChoosenPlayers = [];
 
@@ -171,40 +144,16 @@ const beforeStartCheck = () => {
     return result = isChoosenPlayers.includes(false);
 }
 
-dropdownsOn.forEach(el => {
-    el.addEventListener('click', function() {
-        if ( playersListArr.length !== 0 && isDropdownActive === false) {
-            el.classList.add('is-active');
-            isDropdownActive = true;
-        }
-    });
-})
-
-dropdownsOff.forEach(el => {
-    el.addEventListener('click', function(e) {
-        dropdownChosen = this.parentElement.getElementsByTagName('span');
-        dropdownChosen[0].innerText = e.target.innerText;
-        playersListArrShift = playersListArr.filter(el => el !== e.target.innerText);
-
-        choosenAttr = this.parentElement.querySelector('[is-choosen]');
-        choosenAttr.setAttribute('is-choosen', true);
-     
-        dropdownsOff.forEach(el => {
-
-            if (!el.parentElement.classList.contains('is-active')) {
-
-                element = el.firstElementChild;
-
-                funcUpdateDropdownList(element);
-            }
-        })
-
-        el.parentElement.classList.remove('is-active');
-        isDropdownActive = false;
-        e.stopPropagation();
-    })
-})
-
+/**
+ *  Function funcUpdateDropdownList
+ * 
+ *  For dropdown menus with players names
+ *  Must get the parent element for the players list
+ * 
+ *  remove from the list the element that selected in other dropdown
+ *  (the one player cannot play against himself)
+ * 
+ */
 let funcUpdateDropdownList = (element) => {
     while(element.firstElementChild) {
         element.removeChild(element.lastElementChild);
@@ -218,39 +167,17 @@ let funcUpdateDropdownList = (element) => {
     })
 }
 
-menuSwitch.addEventListener('click', function(e) {
-
-    activeMenuEl.classList.remove('is-active');
-    e.target.parentElement.classList.add('is-active');
-
-    activeMenuEl = e.target.parentElement;
-
-    allLi = document.querySelectorAll('#menuSection li');
-    let index = 0;
-
-    for (var i = 0; i < allLi.length; i++) {
-        if (allLi[i].classList.contains('is-active')) {
-            index = i;
-        }
-    }
-
-    sections.forEach(el => {
-        el.classList.add('is-hidden');
-    })
-    
-    sections[index].classList.remove('is-hidden');
-})
-
-getPlayer.addEventListener('click', function() {
-    getNewPlayer();
-})
-
-getPlayerField.addEventListener('keypress', (event) => {
-    if (event.keyCode === 13) {
-        getNewPlayer();
-    }
-});
-
+/**
+ * Function getNewPlayer
+ * 
+ * Get player names from the main form and save to separate list
+ * Fire the function createPlayersList that builds the players list on the page
+ * Fire the function createPlayersTable that builds the detailed table of results
+ * Fire the function sectionVisibility that makes parent element that contains 
+ * players list visible
+ * Clean the form
+ * 
+ */
 let getNewPlayer = () => {
     player = getPlayer.parentElement.firstElementChild.firstElementChild;
     createPlayersList(player);
@@ -261,43 +188,12 @@ let getNewPlayer = () => {
     player.value = '';
 }
 
-ulPlayer.addEventListener('click', function(e) {
-    if (e.target.matches('button')) {
-        let item = e.target.parentElement.innerText;
-        let itemArr = playersListArr;
-        itemArr = playersListArr.filter(el => el !== item);
-        e.target.parentNode.remove();
-        playersListArr = itemArr;
-    }
-})
-
-startComp.addEventListener('click', function() {
-    check = checkNumPlayers();
-    if (check) {
-
-        if ( playersListArr.length % 2  == 0 ) {
-            document.querySelector('#playersCont').classList.add('is-hidden');
-            removeButtons = document.querySelectorAll('#players-list li button');
-            removeButtons.forEach(element => {
-                element.classList.add('is-hidden');
-            });
-    
-            list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
-    
-            listForDropdown(list, playersListArr);
-        }
-        else {
-            createOrder(playersListArr, randMatches);
-        }
-
-        startComp.setAttribute('disabled', '');
-    }
-
-    funcNumberStages();
-
-    createResultsArray(playersListArr, resultsObject);
-})
-
+/**
+ * Function createOrder
+ * 
+ * Creates two arrays. One of them has the shifted order. Arrays will be used for stages
+ * where the manual choosing players will be unavailable
+ */
 let createOrder = (array, object) => {
     arrlength = array.length;
 
@@ -308,8 +204,11 @@ let createOrder = (array, object) => {
     }
 }
 
-
-
+/**
+ * Function createResultsArray
+ * 
+ * Creates object with empty data based on the array that contains all player names
+ */
 let createResultsArray = (array, object) => {
     for (let i = 0; i < array.length; i++) {
         plname = array[i]; 
@@ -323,6 +222,10 @@ let createResultsArray = (array, object) => {
         info.level = 'Enter the Qualification';
         object[plname] = info;
     }
+}
+
+let resultsObjectProperties = (array) => {
+
 }
 
 let listForDropdown = (list, array) => {
@@ -376,12 +279,6 @@ const checkNumPlayers = () => {
         document.querySelector('#notEnoughPlayersErr').classList.add('is-active');
         return false;
     }
-/*
-    if (playersListArr.length % 2 != 0 ) {
-        document.querySelector('#correctPlayersNumErr').classList.add('is-active');
-        return false;
-    }
-*/ 
     else {
         return true;
     }
@@ -396,6 +293,214 @@ const sectionVisibility = (v, el) => {
         playersListVis = true;
     }
 }
+
+/**
+ * END Functions
+ */
+
+/**
+ * Events
+ */
+
+goalsNumber.addEventListener('click', function(e) {
+    e.preventDefault();
+    goalsToWin = this.form[0].value;
+})
+
+nextRound.addEventListener('click', () => {
+    dropdownsOn.forEach(el => {
+        el.querySelector('.button').removeAttribute('disabled');
+        el.querySelector('.button').setAttribute('is-choosen', false);
+    });
+
+    dropdownsOff.forEach(el => {
+        element = el.children[0];
+        funcUpdateDropdownList(element);
+    })
+
+    dropdownsOn.forEach(el => {
+        el.querySelector('button span').innerText = '---';
+    })
+
+    nextRound.setAttribute('disabled', '');
+    startRound.removeAttribute('disabled');
+    
+    document.querySelectorAll('.player-label').forEach(el => {
+        el.classList.add('is-hidden');
+    })
+})
+
+counterPlus.forEach(el => {
+    el.addEventListener('click', function(e) {
+        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
+        element++;
+
+        playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
+        
+        playerName = playerEl.slice(0, -2);
+        resultsObject[playerName].points = element;
+
+        if(element == goalsToWin ) {
+            console.log("Winner");
+            evenCompSingleWin(playerName);
+        }
+
+        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+    })
+})
+
+counterMinus.forEach(el => {
+    el.addEventListener('click', function(e) {
+
+        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
+
+        element--;
+        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+    })
+})
+
+startRound.addEventListener('click', function() {
+    
+    if (!beforeStartCheck()) {
+        choosenButtons.forEach(el => {
+            player = el.querySelector('button[is-choosen] span').innerText;
+            roundParticipants.push(player);
+
+            playerName = el.children[0].innerText;
+
+            el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
+            el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
+            el.closest('.player-box').querySelector('.player-points ').innerHTML = 0;
+
+            el.querySelector('button[is-choosen]').setAttribute('disabled', '');
+
+            document.querySelectorAll('.player-label').forEach(el => {
+                el.classList.remove('is-hidden');
+            })
+        })
+    } else {
+        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
+        return false;
+    }
+    
+    document.querySelectorAll(".player-box .counter").forEach(el => {
+        el.removeAttribute('disabled');
+    })
+
+    startRound.setAttribute('disabled', '');
+})
+
+dropdownsOn.forEach(el => {
+    el.addEventListener('click', function() {
+        if ( playersListArr.length !== 0 && isDropdownActive === false) {
+            el.classList.add('is-active');
+            isDropdownActive = true;
+        }
+    });
+})
+
+dropdownsOff.forEach(el => {
+    el.addEventListener('click', function(e) {
+        dropdownChosen = this.parentElement.getElementsByTagName('span');
+        dropdownChosen[0].innerText = e.target.innerText;
+        playersListArrShift = playersListArr.filter(el => el !== e.target.innerText);
+
+        choosenAttr = this.parentElement.querySelector('[is-choosen]');
+        choosenAttr.setAttribute('is-choosen', true);
+     
+        dropdownsOff.forEach(el => {
+
+            if (!el.parentElement.classList.contains('is-active')) {
+
+                element = el.firstElementChild;
+
+                funcUpdateDropdownList(element);
+            }
+        })
+
+        el.parentElement.classList.remove('is-active');
+        isDropdownActive = false;
+        e.stopPropagation();
+    })
+})
+
+menuSwitch.addEventListener('click', function(e) {
+
+    activeMenuEl.classList.remove('is-active');
+    e.target.parentElement.classList.add('is-active');
+
+    activeMenuEl = e.target.parentElement;
+
+    allLi = document.querySelectorAll('#menuSection li');
+    let index = 0;
+
+    for (var i = 0; i < allLi.length; i++) {
+        if (allLi[i].classList.contains('is-active')) {
+            index = i;
+        }
+    }
+
+    sections.forEach(el => {
+        el.classList.add('is-hidden');
+    })
+    
+    sections[index].classList.remove('is-hidden');
+})
+
+getPlayer.addEventListener('click', function() {
+    getNewPlayer();
+})
+
+getPlayerField.addEventListener('keypress', (event) => {
+    if (event.keyCode === 13) {
+        getNewPlayer();
+    }
+});
+
+ulPlayer.addEventListener('click', function(e) {
+    if (e.target.matches('button')) {
+        let item = e.target.parentElement.innerText;
+        let itemArr = playersListArr;
+        itemArr = playersListArr.filter(el => el !== item);
+        e.target.parentNode.remove();
+        playersListArr = itemArr;
+    }
+})
+
+startComp.addEventListener('click', function() {
+    check = checkNumPlayers();
+    if (check) {
+
+        if ( playersListArr.length % 2  == 0 ) {
+            document.querySelector('#playersCont').classList.add('is-hidden');
+            removeButtons = document.querySelectorAll('#players-list li button');
+            removeButtons.forEach(element => {
+                element.classList.add('is-hidden');
+            });
+    
+            list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
+    
+            listForDropdown(list, playersListArr);
+        }
+        else {
+            createOrder(playersListArr, randMatches);
+        }
+
+        startComp.setAttribute('disabled', '');
+    }
+
+    funcNumberStages();
+
+    createResultsArray(playersListArr, resultsObject);
+})
+
+/**
+ * END Events
+ */
+
+/**
+ * Console log for debugging
+ */
 
 console.log(numbrOfStages);
 console.log(resultsObject);
