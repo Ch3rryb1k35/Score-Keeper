@@ -26,6 +26,16 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
  * Variables and arrays
  */
 
+ const resultsObjectProperties = [
+    'name',
+    'playedRounds',
+    'wins',
+    'drawn',
+    'lose',
+    'points',
+    'level'
+]
+
 const firstOrderArr = [];
 const secondOrderArr = [];
 
@@ -194,7 +204,7 @@ let getNewPlayer = () => {
  * Creates two arrays. One of them has the shifted order. Arrays will be used for stages
  * where the manual choosing players will be unavailable
  */
-let createOrder = (array, object) => {
+let createOrder = (array) => {
     arrlength = array.length;
 
     for(let i = 0; i <= arrlength-1; i++) {
@@ -209,24 +219,27 @@ let createOrder = (array, object) => {
  * 
  * Creates object with empty data based on the array that contains all player names
  */
+
 let createResultsArray = (array, object) => {
     for (let i = 0; i < array.length; i++) {
-        plname = array[i]; 
+        let plname = array[i]; 
         info = {};
-        info.name = plname;
-        info.playedRounds = 0;
-        info.wins = 0;
-        info.drawn = 0;
-        info.lose = 0;
-        info.points = 0;
-        info.level = 'Enter the Qualification';
+        for(let y = 0; y < resultsObjectProperties.length; y++) {
+            if (resultsObjectProperties[y] == 'level') {
+                info[resultsObjectProperties[y]] = 'Enter the Qualification';
+            } else {
+                info[resultsObjectProperties[y]] = 0;
+            }
+        }
         object[plname] = info;
     }
 }
 
-let resultsObjectProperties = (array) => {
-
-}
+/**
+ * Function listForDropdown
+ * 
+ * Creates full list of players for dropdown menus
+ */
 
 let listForDropdown = (list, array) => {
     list.forEach(li => {
@@ -238,6 +251,12 @@ let listForDropdown = (list, array) => {
         })
     })
 }
+
+/**
+ * Function createPlayersList
+ * 
+ * Creates full list of players for list of the players. Require player name
+ */
 
 const createPlayersList = (player) => {
 
@@ -256,6 +275,12 @@ const createPlayersList = (player) => {
     }
 }
 
+/**
+ * Function createPlayersTable
+ * 
+ * For frst results table creation. 
+ */
+
 const createPlayersTable = (player) => {
     tr = document.createElement('TR');
     for (let i = 1; i < 9; i++ ) {
@@ -266,13 +291,18 @@ const createPlayersTable = (player) => {
         } else {
             td = document.createElement('TD');
             let cont = (i === 2) ? player.value : (i === 8) ? 'Enter the Qualification' : '0';
-    
             td.append(cont);
             tr.appendChild(td); 
         }
     }
     resultsTable.children[0].appendChild(tr);
 }
+
+/**
+ * Function checkNumPlayers
+ * 
+ * Check if number of players is bigger than 1. Displays error
+ */
 
 const checkNumPlayers = () => {
     if (playersListArr.length < 2 ) {
@@ -283,6 +313,12 @@ const checkNumPlayers = () => {
         return true;
     }
 }
+
+/**
+ * Function sectionVisibility
+ * 
+ * Check if the main listh of players is visible or not.
+ */
 
 const sectionVisibility = (v, el) => {
     if (v === false && playersListArr.length === 0 ) {
@@ -295,12 +331,39 @@ const sectionVisibility = (v, el) => {
 }
 
 /**
+ * Function afterStartBlocking
+ * 
+ * Disable the Start Competition button and block possibility of removing players
+ */
+
+const afterStartBlocking = () => {
+    document.querySelector('#playersCont').classList.add('is-hidden');
+    removeButtons = document.querySelectorAll('#players-list li button');
+    removeButtons.forEach(element => {
+        element.classList.add('is-hidden');
+    });
+}
+
+/**
+ * Function oddNumberGame
+ * 
+ * Remove the possibility of adding players manually. 
+ */
+
+const oddNumberGame = () => {
+    dropdownsOn.forEach(el => {
+        el.classList.add('is-hidden');
+    })
+}
+
+/**
  * END Functions
  */
 
 /**
  * Events
  */
+
 
 goalsNumber.addEventListener('click', function(e) {
     e.preventDefault();
@@ -361,7 +424,7 @@ counterMinus.forEach(el => {
 
 startRound.addEventListener('click', function() {
     
-    if (!beforeStartCheck()) {
+    if (!beforeStartCheck() && playersListArr.length % 2  == 0) {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
             roundParticipants.push(player);
@@ -472,18 +535,15 @@ startComp.addEventListener('click', function() {
     if (check) {
 
         if ( playersListArr.length % 2  == 0 ) {
-            document.querySelector('#playersCont').classList.add('is-hidden');
-            removeButtons = document.querySelectorAll('#players-list li button');
-            removeButtons.forEach(element => {
-                element.classList.add('is-hidden');
-            });
-    
+            afterStartBlocking();
             list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
-    
             listForDropdown(list, playersListArr);
         }
         else {
-            createOrder(playersListArr, randMatches);
+            afterStartBlocking();
+            createOrder(playersListArr);
+
+            oddNumberGame();
         }
 
         startComp.setAttribute('disabled', '');
