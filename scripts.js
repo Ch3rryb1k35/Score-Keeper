@@ -27,7 +27,6 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
  */
 
  const resultsObjectProperties = [
-    'name',
     'playedRounds',
     'wins',
     'drawn',
@@ -38,6 +37,7 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
 
 const firstOrderArr = [];
 const secondOrderArr = [];
+let nextRoundParticipants = [];
 
 let playersListArr = [];
 let playersListArrShift = [];
@@ -102,12 +102,15 @@ const evenCompSingleWin = (name) => {
 
     resultsObject[name].playedRounds = resultsObject[name].playedRounds + 1;
     resultsObject[name].wins = resultsObject[name].wins + 1;
+    
+    nextRoundParticipants.push(name);
+
     roundParticipants = roundParticipants.filter(el => el !== name);
+
     playersListArr = playersListArr.filter(el => el !== name);  
     playersListArrShift = playersListArrShift.filter(el => el !== name);
-    
-    evenCompSingleLost(roundParticipants);
 
+    evenCompSingleLost(roundParticipants);
     nextRound.removeAttribute('disabled');
 }
 
@@ -131,6 +134,13 @@ const evenCompSingleLost = (array) => {
     playersListArr = playersListArr.filter(el => el !== array[0]);
     playersListArrShift = playersListArrShift.filter(el => el !== array[0]);
     roundParticipants = [];
+
+
+    if(playersListArr.length === 0) {
+        playersListArr = nextRoundParticipants;
+        playersListArrShift = playersListArr;
+    }
+    console.log(nextRoundParticipants, playersListArr)
 }
 
 /**
@@ -357,6 +367,19 @@ const oddNumberGame = () => {
 }
 
 /**
+ * Function arrayEquals
+ * 
+ * compare two arrays 
+ */
+
+function arrayEquals(a, b) {
+    return Array.isArray(a) &&
+        Array.isArray(b) &&
+        a.length === b.length &&
+        a.every((val, index) => val === b[index]);
+}
+
+/**
  * END Functions
  */
 
@@ -391,6 +414,12 @@ nextRound.addEventListener('click', () => {
     document.querySelectorAll('.player-label').forEach(el => {
         el.classList.add('is-hidden');
     })
+
+    let compareArrays = arrayEquals(nextRoundParticipants, playersListArr);
+    
+    if (compareArrays) {
+        nextRoundParticipants = [];
+    }
 })
 
 counterPlus.forEach(el => {
