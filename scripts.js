@@ -102,6 +102,10 @@ const evenCompSingleWin = (name) => {
 
     resultsObject[name].playedRounds = resultsObject[name].playedRounds + 1;
     resultsObject[name].wins = resultsObject[name].wins + 1;
+    if ( resultsObject[name].playedRounds > 1) {
+        resultsObject[name].level = resultsObject[name].playedRounds;
+    }
+    
     
     nextRoundParticipants.push(name);
 
@@ -109,9 +113,22 @@ const evenCompSingleWin = (name) => {
 
     playersListArr = playersListArr.filter(el => el !== name);  
     playersListArrShift = playersListArrShift.filter(el => el !== name);
+    console.log(nextRoundParticipants.length, playersListArr.length)
+    if(nextRoundParticipants.length == 2) {
+        nextRoundParticipants.forEach(el => {
+            resultsObject[el].level = 'Enter Final';
+        })
+    }
 
+    if(nextRoundParticipants.length == 1 && playersListArr.length == 1 ) {
+        resultsObject[name].level = 'Winner';
+    }
+
+    console.log(nextRoundParticipants, playersListArr)
     evenCompSingleLost(roundParticipants);
     nextRound.removeAttribute('disabled');
+
+    
 }
 
 /**
@@ -128,7 +145,8 @@ const evenCompSingleLost = (array) => {
     resultsObject[array[0]].playedRounds = resultsObject[array[0]].playedRounds + 1;
     resultsObject[array[0]].lose = resultsObject[array[0]].lose + 1;
     resultsObject[array[0]].level = resultsObject[array[0]].level + 1;
-    if (numbrOfStages.length == 1) {
+
+    if (resultsObject[array[0]].lose == '1' && resultsObject[array[0]].playedRounds == '1' ) {
         resultsObject[array[0]].level = 'Disqualified';
     }
     playersListArr = playersListArr.filter(el => el !== array[0]);
@@ -139,6 +157,12 @@ const evenCompSingleLost = (array) => {
     if(playersListArr.length === 0) {
         playersListArr = nextRoundParticipants;
         playersListArrShift = playersListArr;
+    }
+    
+    let compareArrays = arrayEquals(nextRoundParticipants, playersListArr);
+    
+    if (compareArrays ) {
+        nextRoundParticipants = [];
     }
     console.log(nextRoundParticipants, playersListArr)
 }
@@ -414,12 +438,6 @@ nextRound.addEventListener('click', () => {
     document.querySelectorAll('.player-label').forEach(el => {
         el.classList.add('is-hidden');
     })
-
-    let compareArrays = arrayEquals(nextRoundParticipants, playersListArr);
-    
-    if (compareArrays) {
-        nextRoundParticipants = [];
-    }
 })
 
 counterPlus.forEach(el => {
@@ -433,7 +451,6 @@ counterPlus.forEach(el => {
         resultsObject[playerName].points = element;
 
         if(element == goalsToWin ) {
-            console.log("Winner");
             evenCompSingleWin(playerName);
         }
 
@@ -591,6 +608,3 @@ startComp.addEventListener('click', function() {
  * Console log for debugging
  */
 
-console.log(numbrOfStages);
-console.log(resultsObject);
-console.log()
