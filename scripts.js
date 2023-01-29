@@ -35,8 +35,8 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
     'level'
 ]
 
-const firstOrderArr = [];
-const secondOrderArr = [];
+let firstOrderArr = [];
+let secondOrderArr = [];
 let nextRoundParticipants = [];
 
 let playersListArr = [];
@@ -53,6 +53,7 @@ let randMatches = [];
 let playersListVis = false;
 let isDropdownActive = false;
 let isPlayerSelected = false;
+let isOddGame = false;
 
 /**
  * Functions
@@ -92,11 +93,12 @@ let funcNumberStages = () => {
  * 
  */
 const evenCompSingleWin = (name) => {
+
     document.querySelectorAll(".player-box .counter").forEach(el => {
         el.setAttribute('disabled', '');
     })
 
-    if (numbrOfStages.length == 1) {
+    if (numbrOfStages.length == 1 && !isOddGame) {
         resultsObject[name].level = 'Winner!';
     }
 
@@ -105,30 +107,31 @@ const evenCompSingleWin = (name) => {
     if ( resultsObject[name].playedRounds > 1) {
         resultsObject[name].level = resultsObject[name].playedRounds;
     }
-    
-    
-    nextRoundParticipants.push(name);
 
-    roundParticipants = roundParticipants.filter(el => el !== name);
+    if (isOddGame) {
+        firstOrderArr = firstOrderArr.slice(1, firstOrderArr.length);
+        playersListArrShift = secondOrderArr;
+    } else {
+        nextRoundParticipants.push(name);
+        roundParticipants = roundParticipants.filter(el => el !== name);
+        playersListArr = playersListArr.filter(el => el !== name);  
+        playersListArrShift = playersListArrShift.filter(el => el !== name);
 
-    playersListArr = playersListArr.filter(el => el !== name);  
-    playersListArrShift = playersListArrShift.filter(el => el !== name);
-    console.log(nextRoundParticipants.length, playersListArr.length)
-    if(nextRoundParticipants.length == 2) {
-        nextRoundParticipants.forEach(el => {
-            resultsObject[el].level = 'Enter Final';
-        })
+        if(nextRoundParticipants.length == 2) {
+            nextRoundParticipants.forEach(el => {
+                resultsObject[el].level = 'Enter Final';
+            })
+        }
+
+        if(nextRoundParticipants.length == 1 && playersListArr.length == 1 ) {
+            resultsObject[name].level = 'Winner';
+        }
+
+        playersListArrShift = roundParticipants;
     }
 
-    if(nextRoundParticipants.length == 1 && playersListArr.length == 1 ) {
-        resultsObject[name].level = 'Winner';
-    }
-
-    console.log(nextRoundParticipants, playersListArr)
-    evenCompSingleLost(roundParticipants);
-    nextRound.removeAttribute('disabled');
-
-    
+    evenCompSingleLost(playersListArrShift);
+    nextRound.removeAttribute('disabled');  
 }
 
 /**
@@ -142,6 +145,7 @@ const evenCompSingleWin = (name) => {
  *  
  */
 const evenCompSingleLost = (array) => {
+
     resultsObject[array[0]].playedRounds = resultsObject[array[0]].playedRounds + 1;
     resultsObject[array[0]].lose = resultsObject[array[0]].lose + 1;
     resultsObject[array[0]].level = resultsObject[array[0]].level + 1;
@@ -149,22 +153,31 @@ const evenCompSingleLost = (array) => {
     if (resultsObject[array[0]].lose == '1' && resultsObject[array[0]].playedRounds == '1' ) {
         resultsObject[array[0]].level = 'Disqualified';
     }
-    playersListArr = playersListArr.filter(el => el !== array[0]);
-    playersListArrShift = playersListArrShift.filter(el => el !== array[0]);
-    roundParticipants = [];
 
+    if (isOddGame) {
+        secondOrderArr = secondOrderArr.slice(1, secondOrderArr.length);
+    } else {
+        playersListArr = playersListArr.filter(el => el !== array[0]);
+        playersListArrShift = playersListArrShift.filter(el => el !== array[0]);
+        roundParticipants = [];
+    
+    
+        if(playersListArr.length === 0) {
+            playersListArr = nextRoundParticipants;
+            playersListArrShift = playersListArr;
+        }
+        
+        let compareArrays = arrayEquals(nextRoundParticipants, playersListArr);
+        
+        if (compareArrays ) {
+            nextRoundParticipants = [];
+        }
+    }
 
-    if(playersListArr.length === 0) {
-        playersListArr = nextRoundParticipants;
-        playersListArrShift = playersListArr;
+    if (firstOrderArr.length == 0 && secondOrderArr.length == 0) {
+        oddNumberGameResults();
+        isOddGame = false;
     }
-    
-    let compareArrays = arrayEquals(nextRoundParticipants, playersListArr);
-    
-    if (compareArrays ) {
-        nextRoundParticipants = [];
-    }
-    console.log(nextRoundParticipants, playersListArr)
 }
 
 /**
@@ -381,13 +394,32 @@ const afterStartBlocking = () => {
 /**
  * Function oddNumberGame
  * 
- * Remove the possibility of adding players manually. 
+ * Remove the possibility of adding players manually and fill the player name and count fields. 
  */
 
 const oddNumberGame = () => {
     dropdownsOn.forEach(el => {
         el.classList.add('is-hidden');
     })
+
+    isOddGame = true;
+
+    playerLabels[0].querySelector('.player-name').innerText = `${firstOrderArr[0]}: `;
+    playerLabels[1].querySelector('.player-name').innerText = `${secondOrderArr[0]}: `;
+
+    playerLabels[0].querySelector('.player-points').innerText = '0';
+    playerLabels[1].querySelector('.player-points').innerText = '0';
+}
+
+/**
+ * Function oddNumberGame
+ * 
+ * Collect the odd number game results and creates array of players for the next round; 
+ */
+let oddNumberGameResults = () => {
+    for(const [key, value] of Object.entries(resultsObject)) { 
+        console.log(value.wins) 
+    }
 }
 
 /**
@@ -435,9 +467,15 @@ nextRound.addEventListener('click', () => {
     nextRound.setAttribute('disabled', '');
     startRound.removeAttribute('disabled');
     
-    document.querySelectorAll('.player-label').forEach(el => {
-        el.classList.add('is-hidden');
-    })
+    if ( !isOddGame ) {
+        document.querySelectorAll('.player-label').forEach(el => {
+            el.classList.add('is-hidden');
+        })
+    }
+
+    if (isOddGame) {
+        oddNumberGame();
+    }
 })
 
 counterPlus.forEach(el => {
@@ -469,8 +507,8 @@ counterMinus.forEach(el => {
 })
 
 startRound.addEventListener('click', function() {
-    
-    if (!beforeStartCheck() && playersListArr.length % 2  == 0) {
+
+    if (!beforeStartCheck && playersListArr.length % 2  == 0 && !isOddGame) {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
             roundParticipants.push(player);
@@ -487,13 +525,19 @@ startRound.addEventListener('click', function() {
                 el.classList.remove('is-hidden');
             })
         })
-    } else {
+    } 
+    
+    if ( beforeStartCheck() && !isOddGame ) {
         document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
         return false;
     }
     
     document.querySelectorAll(".player-box .counter").forEach(el => {
         el.removeAttribute('disabled');
+    })
+
+    document.querySelectorAll(".player-points").forEach(el => {
+        el.classList.remove('is-hidden');
     })
 
     startRound.setAttribute('disabled', '');
