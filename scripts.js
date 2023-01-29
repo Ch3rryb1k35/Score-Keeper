@@ -197,7 +197,6 @@ const beforeStartCheck = () => {
             isChoosenPlayers.push(false);
         }
     })
-
     return result = isChoosenPlayers.includes(false);
 }
 
@@ -337,12 +336,44 @@ const createPlayersTable = (player) => {
             tr.appendChild(th);
         } else {
             td = document.createElement('TD');
-            let cont = (i === 2) ? player.value : (i === 8) ? 'Enter the Qualification' : '0';
-            td.append(cont);
+            if (i == 2) {
+                td.append(player.value);
+                td.classList.add('is-player');
+            }
+            if (i == 8) {
+                td.append('Enter the Qualification');
+            }
+            else {
+                td.append('0');
+            }
             tr.appendChild(td); 
         }
     }
     resultsTable.children[0].appendChild(tr);
+}
+
+const updatePlayersTable = (object) => {
+
+    // let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
+    // resultsTableRows.forEach(el => {
+    //     console.log(el.innerText);
+    //     el.innerHTML = '0';
+    // })
+
+    for(const [key, value] of Object.entries(object)) { 
+        
+        console.log(key, value);
+
+        // tr = document.createElement('TR');
+        // for (let i = 1; i < 8; i++ ) {
+        //     td = document.createElement('TD');
+        //     if (i == 1 ) { td.append(key); }
+            
+        //     tr.appendChild(td); 
+        // }
+        // resultsTable.children[0].appendChild(tr);
+    }
+
 }
 
 /**
@@ -417,8 +448,15 @@ const oddNumberGame = () => {
  * Collect the odd number game results and creates array of players for the next round; 
  */
 let oddNumberGameResults = () => {
+    let players = [];
+    let wins = [];
     for(const [key, value] of Object.entries(resultsObject)) { 
-        console.log(value.wins) 
+        
+        console.log(key, value);
+        players.push(key);
+        wins.push(value.wins);
+
+        console.log(players, wins)
     }
 }
 
@@ -486,6 +524,7 @@ counterPlus.forEach(el => {
         playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
         
         playerName = playerEl.slice(0, -2);
+
         resultsObject[playerName].points = element;
 
         if(element == goalsToWin ) {
@@ -507,14 +546,12 @@ counterMinus.forEach(el => {
 })
 
 startRound.addEventListener('click', function() {
-
-    if (!beforeStartCheck && playersListArr.length % 2  == 0 && !isOddGame) {
+    updatePlayersTable(resultsObject);
+    if (!beforeStartCheck() && playersListArr.length % 2 === 0 && !isOddGame) {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
             roundParticipants.push(player);
-
             playerName = el.children[0].innerText;
-
             el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
             el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
             el.closest('.player-box').querySelector('.player-points ').innerHTML = 0;
@@ -624,23 +661,21 @@ startComp.addEventListener('click', function() {
     check = checkNumPlayers();
     if (check) {
 
-        if ( playersListArr.length % 2  == 0 ) {
+        if ( playersListArr.length % 2  == 0  && !isOddGame) {
+            console.log('Even Game');
             afterStartBlocking();
             list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
             listForDropdown(list, playersListArr);
         }
         else {
+            console.log('Odd Game');
             afterStartBlocking();
             createOrder(playersListArr);
-
             oddNumberGame();
         }
-
         startComp.setAttribute('disabled', '');
     }
-
     funcNumberStages();
-
     createResultsArray(playersListArr, resultsObject);
 })
 
