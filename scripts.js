@@ -94,7 +94,7 @@ let funcNumberStages = () => {
  * 
  */
 const evenCompSingleWin = (name) => {
-    
+    console.log('single win')
     document.querySelectorAll(".player-box .counter").forEach(el => {
         el.setAttribute('disabled', '');
     })
@@ -110,10 +110,11 @@ const evenCompSingleWin = (name) => {
     }
 
     if (isOddGame) {
+        console.log(`${name} win Odd`)
         firstOrderArr = firstOrderArr.slice(1, firstOrderArr.length);
         playersListArrShift = secondOrderArr;
     } else {
-        console.log(`${name} win`)
+        console.log(`${name} win Even`)
         nextRoundParticipants.push(name);
         roundParticipants = roundParticipants.filter(el => el !== name);
         playersListArr = playersListArr.filter(el => el !== name);  
@@ -158,9 +159,10 @@ const evenCompSingleLost = (array) => {
     }
 
     if (isOddGame) {
+        console.log(`${array[0]} lost Odd`)
         secondOrderArr = secondOrderArr.slice(1, secondOrderArr.length);
     } else {
-        console.log(`${array[0]} lost`)
+        console.log(`${array[0]} lost Even`)
         playersListArr = playersListArr.filter(el => el !== array[0]);
         playersListArrShift = playersListArrShift.filter(el => el !== array[0]);
         roundParticipants = [];
@@ -444,7 +446,7 @@ const oddNumberGame = () => {
     })
 
     isOddGame = true;
-    console.log('is odd game')
+
     playerLabels[0].querySelector('.player-name').innerText = `${firstOrderArr[0]}: `;
     playerLabels[1].querySelector('.player-name').innerText = `${secondOrderArr[0]}: `;
 
@@ -507,10 +509,11 @@ nextRound.addEventListener('click', () => {
             element = el.children[0];
             nextRoundDropdownList(element);
         })
-    }
 
-    nextRound.setAttribute('disabled', '');
-    startRound.removeAttribute('disabled');
+        document.querySelectorAll('.player-label').forEach(el => {
+            el.classList.add('is-hidden');
+        })
+    }
 
     if (arrayEquals(nextRoundParticipants, playersListArr) && playersListArr % 2 !== 0 && isGame ) {
         isOddGame = true;
@@ -522,12 +525,9 @@ nextRound.addEventListener('click', () => {
 
         oddNumberGame();
     }
-
-    if ( !isOddGame ) {
-        document.querySelectorAll('.player-label').forEach(el => {
-            el.classList.add('is-hidden');
-        })
-    }
+    
+    nextRound.setAttribute('disabled', '');
+    startRound.removeAttribute('disabled');
 })
 
 counterPlus.forEach(el => {
