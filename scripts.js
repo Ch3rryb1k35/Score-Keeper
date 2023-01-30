@@ -266,7 +266,6 @@ let getNewPlayer = () => {
  */
 let createOrder = (array) => {
     arrlength = array.length;
-
     for(let i = 0; i <= arrlength-1; i++) {
         firstOrderArr[i] = array[i];
         secondOrderArr[i] = array[i+1];
@@ -445,7 +444,7 @@ const oddNumberGame = () => {
     })
 
     isOddGame = true;
-
+    console.log('is odd game')
     playerLabels[0].querySelector('.player-name').innerText = `${firstOrderArr[0]}: `;
     playerLabels[1].querySelector('.player-name').innerText = `${secondOrderArr[0]}: `;
 
@@ -495,36 +494,39 @@ goalsNumber.addEventListener('click', function(e) {
 })
 
 nextRound.addEventListener('click', () => {
-    dropdownsOn.forEach(el => {
-        el.querySelector('.button').removeAttribute('disabled');
-        el.querySelector('.button').setAttribute('is-choosen', false);
-    });
 
-    dropdownsOn.forEach(el => {
-        el.querySelector('button span').innerText = '---';
-    })
-
-    dropdownsOff.forEach(el => {
-        element = el.children[0];
-        nextRoundDropdownList(element);
-    })
+    if (!isOddGame) {
+        dropdownsOn.forEach(el => {
+            el.querySelector('.button').removeAttribute('disabled');
+            el.querySelector('.button').setAttribute('is-choosen', false);
+        });
+        dropdownsOn.forEach(el => {
+            el.querySelector('button span').innerText = '---';
+        })
+        dropdownsOff.forEach(el => {
+            element = el.children[0];
+            nextRoundDropdownList(element);
+        })
+    }
 
     nextRound.setAttribute('disabled', '');
     startRound.removeAttribute('disabled');
 
-    if (arrayEquals(nextRoundParticipants, playersListArr) && playersListArr % 2 !== 0 ) {
+    if (arrayEquals(nextRoundParticipants, playersListArr) && playersListArr % 2 !== 0 && isGame ) {
         isOddGame = true;
+
+        if (nextRoundParticipants.length >=2 ) {
+            createOrder(nextRoundParticipants);
+            nextRoundParticipants = [];
+        }
+
+        oddNumberGame();
     }
 
     if ( !isOddGame ) {
         document.querySelectorAll('.player-label').forEach(el => {
             el.classList.add('is-hidden');
         })
-    }
-
-    if (isOddGame) {
-        createOrder(playersListArr);
-        oddNumberGame();
     }
 })
 
@@ -579,7 +581,7 @@ startRound.addEventListener('click', function() {
         })
     } 
     
-    if ( beforeStartCheck() ) {
+    if ( beforeStartCheck() && !isOddGame) {
         document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
         return false;
     }
