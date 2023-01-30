@@ -338,35 +338,45 @@ const createPlayersTable = (player) => {
             td = document.createElement('TD');
             let cont = (i === 2) ? player.value : (i === 8) ? 'Enter the Qualification' : '0';
             td.append(cont);
+            if (i == 2) {
+                td.classList.add('cell-playername')
+            }
             tr.appendChild(td); 
         }
     }
-    resultsTable.children[0].appendChild(tr);
+    resultsTable.querySelector('tbody').appendChild(tr);
 }
 
-// const updatePlayersTable = (object) => {
+const clearPlayersTable = () => {
+    let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
+    resultsTableRows.forEach(el => {
+        if (!el.classList.contains('cell-playername') ) {
+            el.innerHTML = '0';
+        }
+    })
+}
 
-//     let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
-//     resultsTableRows.forEach(el => {
-//         console.log(el.innerText);
-//         el.innerHTML = '0';
-//     })
+const updatePlayersTable = () => {
 
-//     for(const [key, value] of Object.entries(object)) { 
-        
-//         console.log(key, value);
+    clearPlayersTable();
 
-//         tr = document.createElement('TR');
-//         for (let i = 1; i < 8; i++ ) {
-//             td = document.createElement('TD');
-//             if (i == 1 ) { td.append(key); }
-            
-//             tr.appendChild(td); 
-//         }
-//         resultsTable.children[0].appendChild(tr);
-//     }
+    let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
+    console.log(resultsTableRows.length);
 
-// }
+    for (let i = 0; i<resultsTableRows.length; i++) {
+        if (resultsTableRows[i].classList.contains('cell-playername') ) {
+            player = resultsTableRows[i].innerHTML;
+            console.log(player)
+
+            resultsTableRows[i+1].innerHTML = resultsObject[player].playedRounds;
+            resultsTableRows[i+2].innerHTML = resultsObject[player].wins;
+            resultsTableRows[i+3].innerHTML = resultsObject[player].drawn;
+            resultsTableRows[i+4].innerHTML = resultsObject[player].lose;
+            resultsTableRows[i+5].innerHTML = resultsObject[player].points;
+            resultsTableRows[i+6].innerHTML = resultsObject[player].level;
+        }
+    }
+}
 
 /**
  * Function checkNumPlayers
@@ -524,6 +534,8 @@ counterPlus.forEach(el => {
         }
 
         e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+
+        updatePlayersTable();
     })
 })
 
@@ -534,11 +546,12 @@ counterMinus.forEach(el => {
 
         element--;
         e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+        updatePlayersTable()
     })
 })
 
 startRound.addEventListener('click', function() {
-    updatePlayersTable(resultsObject);
+
     if (!beforeStartCheck() && playersListArr.length % 2 === 0 && !isOddGame) {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
@@ -606,6 +619,7 @@ dropdownsOff.forEach(el => {
     })
 })
 
+/* 
 menuSwitch.addEventListener('click', function(e) {
 
     activeMenuEl.classList.remove('is-active');
@@ -628,6 +642,7 @@ menuSwitch.addEventListener('click', function(e) {
     
     sections[index].classList.remove('is-hidden');
 })
+*/
 
 getPlayer.addEventListener('click', function() {
     getNewPlayer();
