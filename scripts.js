@@ -336,45 +336,37 @@ const createPlayersTable = (player) => {
             tr.appendChild(th);
         } else {
             td = document.createElement('TD');
-            if (i == 2) {
-                td.append(player.value);
-                td.classList.add('is-player');
-            }
-            if (i == 8) {
-                td.append('Enter the Qualification');
-            }
-            else {
-                td.append('0');
-            }
+            let cont = (i === 2) ? player.value : (i === 8) ? 'Enter the Qualification' : '0';
+            td.append(cont);
             tr.appendChild(td); 
         }
     }
     resultsTable.children[0].appendChild(tr);
 }
 
-const updatePlayersTable = (object) => {
+// const updatePlayersTable = (object) => {
 
-    // let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
-    // resultsTableRows.forEach(el => {
-    //     console.log(el.innerText);
-    //     el.innerHTML = '0';
-    // })
+//     let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
+//     resultsTableRows.forEach(el => {
+//         console.log(el.innerText);
+//         el.innerHTML = '0';
+//     })
 
-    for(const [key, value] of Object.entries(object)) { 
+//     for(const [key, value] of Object.entries(object)) { 
         
-        console.log(key, value);
+//         console.log(key, value);
 
-        // tr = document.createElement('TR');
-        // for (let i = 1; i < 8; i++ ) {
-        //     td = document.createElement('TD');
-        //     if (i == 1 ) { td.append(key); }
+//         tr = document.createElement('TR');
+//         for (let i = 1; i < 8; i++ ) {
+//             td = document.createElement('TD');
+//             if (i == 1 ) { td.append(key); }
             
-        //     tr.appendChild(td); 
-        // }
-        // resultsTable.children[0].appendChild(tr);
-    }
+//             tr.appendChild(td); 
+//         }
+//         resultsTable.children[0].appendChild(tr);
+//     }
 
-}
+// }
 
 /**
  * Function checkNumPlayers
