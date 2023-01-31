@@ -37,14 +37,14 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
 
 let firstOrderArr = [];
 let secondOrderArr = [];
-let nextRoundParticipants = [];
+let nextOddRoundParticipants = [];
 
 let playersListArr = [];
 let playersListArrShift = [];
 let roundParticipants = [];
 let resultsObject = {};
 let goalsToWin = 2;
-let numbrOfStages = [];
+// let numbrOfStages = [];
 let randMatches = [];
 
 /**
@@ -65,18 +65,18 @@ let isGame = false;
  * creates an array with the number of rounrs
  * based on the number of players
  */
-let funcNumberStages = () => {
-    numbrOfStages[0] = playersListArr.length;
-    num = playersListArr.length;
-    counter = 1;
-    while (num > 3) {
-        num = Math.round(num / 2);
-        if (num == 1 ) { break; }
-        numbrOfStages[counter] = num;
-        counter++;
-    }
-}
 
+// let funcNumberStages = () => {
+//     numbrOfStages[0] = playersListArr.length;
+//     num = playersListArr.length;
+//     counter = 1;
+//     while (num > 3) {
+//         num = Math.round(num / 2);
+//         if (num == 1 ) { break; }
+//         numbrOfStages[counter] = num;
+//         counter++;
+//     }
+// }
 
 /**
  * Function counterSwitcher
@@ -112,13 +112,11 @@ let counterSwitcher = (state) => {
  * 
  */
 const evenCompSingleWin = (name) => {
-    console.log('single win')
-
     counterSwitcher('disable');
 
-    if (numbrOfStages.length == 1 && !isOddGame) {
-        resultsObject[name].level = 'Winner!';
-    }
+    // if (numbrOfStages.length == 1 && !isOddGame) {
+    //     resultsObject[name].level = 'Winner!';
+    // }
 
     resultsObjectUpdater(name, 'playedRounds', 1);
     resultsObjectUpdater(name, 'wins', 1);
@@ -127,30 +125,31 @@ const evenCompSingleWin = (name) => {
     if (isOddGame) {
         console.log(`${name} win Odd`)
         firstOrderArr = firstOrderArr.slice(1, firstOrderArr.length);
-        playersListArrShift = secondOrderArr;
+        // playersListArrShift = secondOrderArr;
+        evenCompSingleLost(secondOrderArr);
     } else {
         console.log(`${name} win Even`)
-        nextRoundParticipants.push(name);
+        nextOddRoundParticipants.push(name);
 
         roundParticipants = arrayFilter(roundParticipants, name);
         playersListArr = arrayFilter(playersListArr, name);
         playersListArrShift = arrayFilter(playersListArrShift, name);
 
-        if(nextRoundParticipants.length == 2) {
-            nextRoundParticipants.forEach(el => {
+        if(nextOddRoundParticipants.length == 2) {
+            nextOddRoundParticipants.forEach(el => {
                 resultsObject[el].level = 'Enter Final';
             })
         }
 
-        if(nextRoundParticipants.length == 1 && playersListArr.length == 1 ) {
+        if(nextOddRoundParticipants.length == 1 && playersListArr.length == 1 ) {
             resultsObject[name].level = 'Winner';
         }
 
         playersListArrShift = roundParticipants;
+        evenCompSingleLost(playersListArrShift);
     }
 
     updatePlayersTable();
-    evenCompSingleLost(playersListArrShift);
     nextRound.removeAttribute('disabled');  
 }
 
@@ -165,14 +164,10 @@ const evenCompSingleWin = (name) => {
  *  
  */
 const evenCompSingleLost = (array) => {
-
+console.log(array)
     resultsObjectUpdater(array[0], 'playedRounds', 1);
     resultsObjectUpdater(array[0], 'lose', 1);
     resultsObjectUpdater(array[0], 'level', 1);
-
-    // if (resultsObject[array[0]].lose == '1' && resultsObject[array[0]].playedRounds == '1' ) {
-    //     resultsObject[array[0]].level = 'Disqualified';
-    // }
 
     if (isOddGame) {
         console.log(`${array[0]} lost Odd`)
@@ -185,14 +180,13 @@ const evenCompSingleLost = (array) => {
         roundParticipants = [];
  
         if(playersListArr.length === 0) {
-            playersListArr = nextRoundParticipants;
+            playersListArr = nextOddRoundParticipants;
             playersListArrShift = playersListArr;
         }
     }
 
     if (firstOrderArr.length == 0 && secondOrderArr.length == 0) {
         oddNumberGameResults();
-        isOddGame = false;
     }
 
     updatePlayersTable();
@@ -209,7 +203,7 @@ let resultsObjectUpdater = (name, prop, val) => {
 }
 
 let resultsObjectLogic = (name, prop, val) => {
-    if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose') {
+    if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose' && !isOddGame) {
         resultsObject[name].level = 'Disqualified';
     }
     if (resultsObject[name][prop] > 1 && resultsObject[name]['win'] > 1 && prop == 'level') {
@@ -282,12 +276,12 @@ let getNewPlayer = () => {
 }
 
 /**
- * Function createOrder
+ * Function createOddArrays
  * 
  * Creates two arrays. One of them has the shifted order. Arrays will be used for stages
  * where the manual choosing players will be unavailable
  */
-let createOrder = (array) => {
+let createOddArrays = (array) => {
     arrlength = array.length;
     for(let i = 0; i <= arrlength-1; i++) {
         firstOrderArr[i] = array[i];
@@ -536,17 +530,20 @@ nextRound.addEventListener('click', () => {
         })
     }
 
-    if (arrayEquals(nextRoundParticipants, playersListArr) && playersListArr % 2 !== 0 && isGame ) {
+    if (arrayEquals(nextOddRoundParticipants, playersListArr) && playersListArr % 2 !== 0 && isGame ) {
         isOddGame = true;
 
-        if (nextRoundParticipants.length >=2 ) {
-            createOrder(nextRoundParticipants);
-            nextRoundParticipants = [];
+        if (nextOddRoundParticipants.length >=2 ) {
+            createOddArrays(nextOddRoundParticipants);
+            nextOddRoundParticipants = [];
         }
-
         oddNumberGame();
     }
-    
+
+    if(isOddGame && firstOrderArr.length == 0 && secondOrderArr == 0) {
+
+    }
+
     nextRound.setAttribute('disabled', '');
     startRound.removeAttribute('disabled');
 })
@@ -602,9 +599,13 @@ startRound.addEventListener('click', function() {
             })
         })
     } 
-     
-    counterSwitcher('enable');
+    
+    if (isOddGame) {
+        oddNumberGame();
+    }
 
+    counterSwitcher('enable');
+    
     document.querySelectorAll(".player-points").forEach(el => {
         el.classList.remove('is-hidden');
     })
@@ -699,21 +700,23 @@ ulPlayer.addEventListener('click', function(e) {
 startComp.addEventListener('click', function() {
     isGame = true;
     if (checkNumPlayers()) {
-        if ( playersListArr.length % 2  == 0  && !isOddGame) {
+        if ( playersListArr.length % 2  == 0) {
             console.log('Even Game');
             afterStartBlocking();
             list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
             listForDropdown(list, playersListArr);
+            isOddGame = false;
         }
         else {
             console.log('Odd Game');
+            isOddGame = true;
             afterStartBlocking();
-            createOrder(playersListArr);
+            createOddArrays(playersListArr);
             oddNumberGame();
         }
         startComp.setAttribute('disabled', '');
     }
-    funcNumberStages();
+    // funcNumberStages();
     createResultsObject(playersListArr, resultsObject);
 })
 
