@@ -208,9 +208,12 @@ let resultsObjectUpdater = (name, prop, val) => {
     resultsObjectLogic(name, prop);
 }
 
-let resultsObjectLogic = (name, prop) => {
+let resultsObjectLogic = (name, prop, val) => {
     if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose') {
         resultsObject[name].level = 'Disqualified';
+    }
+    if (resultsObject[name][prop] > 1 && resultsObject[name]['win'] > 1 && prop == 'level') {
+        resultsObject[name].level = 'val';
     }
 }
 
@@ -244,26 +247,12 @@ const beforeStartCheckEvenCho = () => {
  *  (the one player cannot play against himself)
  * 
  */
-let funcUpdateDropdownList = (element) => {
+
+let funcUpdateDropdownList = (element, array) => {
     while(element.firstElementChild) {
         element.removeChild(element.lastElementChild);
     }
-
-    playersListArrShift.forEach(item => {
-        newListPlayer = document.createElement('A');
-        newListPlayer.classList.add('dropdown-item');
-        newListPlayer.append(item);
-        element.appendChild(newListPlayer);
-    })
-}
-
-let nextRoundDropdownList = (element) => {
-
-    while(element.firstElementChild) {
-        element.removeChild(element.lastElementChild);
-    }
-
-    playersListArr.forEach(item => {
+    array.forEach(item => {
         newListPlayer = document.createElement('A');
         newListPlayer.classList.add('dropdown-item');
         newListPlayer.append(item);
@@ -308,12 +297,12 @@ let createOrder = (array) => {
 }
 
 /**
- * Function createResultsArray
+ * Function createResultsObject
  * 
  * Creates object with empty data based on the array that contains all player names
  */
 
-let createResultsArray = (array, object) => {
+let createResultsObject = (array, object) => {
     for (let i = 0; i < array.length; i++) {
         let plname = array[i]; 
         info = {};
@@ -539,7 +528,7 @@ nextRound.addEventListener('click', () => {
         })
         dropdownsOff.forEach(el => {
             element = el.children[0];
-            nextRoundDropdownList(element);
+            funcUpdateDropdownList(element, playersListArr);
         })
 
         document.querySelectorAll('.player-label').forEach(el => {
@@ -646,7 +635,7 @@ dropdownsOff.forEach(el => {
 
             if (!el.parentElement.classList.contains('is-active')) {
                 element = el.firstElementChild;
-                funcUpdateDropdownList(element);
+                funcUpdateDropdownList(element, playersListArrShift);
             }
         })
 
@@ -704,6 +693,9 @@ ulPlayer.addEventListener('click', function(e) {
     }
 })
 
+/**
+ * start competition Button
+ */
 startComp.addEventListener('click', function() {
     isGame = true;
     if (checkNumPlayers()) {
@@ -722,7 +714,7 @@ startComp.addEventListener('click', function() {
         startComp.setAttribute('disabled', '');
     }
     funcNumberStages();
-    createResultsArray(playersListArr, resultsObject);
+    createResultsObject(playersListArr, resultsObject);
 })
 
 /**
