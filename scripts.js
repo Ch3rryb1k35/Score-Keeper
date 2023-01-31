@@ -77,6 +77,17 @@ let funcNumberStages = () => {
     }
 }
 
+let counterSwitcher = (state) => {
+    document.querySelectorAll(".player-box .counter").forEach(el => {
+        if (state == 'disable') {
+            el.setAttribute('disabled', '');
+        }
+        if (state == 'enable') {
+            el.removeAttribute('disabled');
+        }
+    })
+}
+
 /**
  * Function evenCompSingleWin
  * 
@@ -95,15 +106,15 @@ let funcNumberStages = () => {
  */
 const evenCompSingleWin = (name) => {
     console.log('single win')
-    document.querySelectorAll(".player-box .counter").forEach(el => {
-        el.setAttribute('disabled', '');
-    })
+
+    counterSwitcher('disable');
 
     if (numbrOfStages.length == 1 && !isOddGame) {
         resultsObject[name].level = 'Winner!';
     }
 
-    resultsObject[name].playedRounds = resultsObject[name].playedRounds + 1;
+    objectUpdater(name, 'playedRounds', 1);
+    // resultsObject[name].playedRounds = resultsObject[name].playedRounds + 1;
     resultsObject[name].wins = resultsObject[name].wins + 1;
     if ( resultsObject[name].playedRounds > 1) {
         resultsObject[name].level = resultsObject[name].playedRounds;
@@ -180,6 +191,10 @@ const evenCompSingleLost = (array) => {
     }
 
     updatePlayersTable();
+}
+
+let objectUpdater = (name, prop, val) => {
+    resultsObject[name][prop] = resultsObject[name][prop] + val;
 }
 
 /**
@@ -585,10 +600,7 @@ startRound.addEventListener('click', function() {
         document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
         return false;
     }
-    
-    document.querySelectorAll(".player-box .counter").forEach(el => {
-        el.removeAttribute('disabled');
-    })
+    counterSwitcher('enable');
 
     document.querySelectorAll(".player-points").forEach(el => {
         el.classList.remove('is-hidden');

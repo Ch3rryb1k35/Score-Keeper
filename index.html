@@ -51,7 +51,6 @@
             </div>
           </div>
           <div class="tile is-ancestor">
-            
             <div class="tile is-parent is-vertical">
               <!-- <div class="tile is-child"></div> -->
               <h3 class="mb-3">Add players at the form below (you can use the Enter key):</h3>
@@ -72,7 +71,6 @@
               </div>
             </div>
           </div>
-  
         </div>
         <div class="columns">
           <div class="column">
@@ -83,56 +81,52 @@
         <div class="tile is-ancestor">
           <div class="tile is-vertical is-parent is-4">
             <div class="tile is-child notification player-box is-primary">
-                  <p class="title player-label">
-                    <span class="player-name">Player One: </span>
-                    <span class="player-points is-hidden">0</span></p>
-                  <div class="dropdown dropdowwn-players ">
-                    <div class="dropdown-trigger">
-                      <div class="buttons has-addons">
-                        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" is-choosen="false">
-                          <span>Choose the Player</span>
-                          <span class="icon is-small">
-                            <i class="fas fa-angle-down" aria-hidden="true"></i>
-                          </span>
-                        </button>
-
-                      </div>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu1" role="menu">
-                      <div class="dropdown-content">
-                      </div>
-                    </div>
+              <p class="title player-label">
+                <span class="player-name">Player One: </span>
+                <span class="player-points is-hidden">0</span></p>
+              <div class="dropdown dropdowwn-players ">
+                <div class="dropdown-trigger">
+                  <div class="buttons has-addons">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" is-choosen="false">
+                      <span>Choose the Player</span>
+                      <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                      </span>
+                    </button>
                   </div>
-                  <button class="button counter plus" disabled>+1</button>
-                  <button class="button counter minus" disabled>-1</button>
                 </div>
-                
-                <article class="tile is-child notification player-box is-warning">
-                  <p class="title player-label">
-                    <span class="player-name">Player Two: </span>
-                    <span class="player-points is-hidden">0</span></p>
-                  <!-- <p class="subtitle">Bottom tile</p> -->
-                  <div class="dropdown dropdowwn-players">
-                    <div class="dropdown-trigger">
-                      <div class="buttons has-addons">
-                        <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" is-choosen="false">
-                          <span>Choose the Player</span>
-                          <span class="icon is-small">
-                            <i class="fas fa-angle-down" aria-hidden="true"></i>
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                      <div class="dropdown-content">
-                      </div>
-                    </div>
+                <div class="dropdown-menu" id="dropdown-menu1" role="menu">
+                  <div class="dropdown-content">
                   </div>
-                  <button class="button counter plus" disabled>+1</button>
-                  <button class="button counter minus" disabled>-1</button>
-                </article>
-
-
+                </div>
+              </div>
+              <button class="button counter plus" disabled>+1</button>
+              <button class="button counter minus" disabled>-1</button>
+            </div>    
+            <article class="tile is-child notification player-box is-warning">
+              <p class="title player-label">
+                <span class="player-name">Player Two: </span>
+                <span class="player-points is-hidden">0</span></p>
+              <!-- <p class="subtitle">Bottom tile</p> -->
+              <div class="dropdown dropdowwn-players">
+                <div class="dropdown-trigger">
+                  <div class="buttons has-addons">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu" is-choosen="false">
+                      <span>Choose the Player</span>
+                      <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                  <div class="dropdown-content">
+                  </div>
+                </div>
+              </div>
+              <button class="button counter plus" disabled>+1</button>
+              <button class="button counter minus" disabled>-1</button>
+            </article>
           </div>
           <div class="tile is-parent is-4" id="round-controls">
             <article class="tile is-child notification is-light ">
@@ -167,22 +161,28 @@
       </div>
     </section>
     <section class="section" id="tableSection">
-      <table class="table is-hoverable">
-        <thead>
-          <tr>
-            <th><abbr title="Position(based on wins)">Number</abbr></th>
-            <th>Player name</th>
-            <th><abbr title="Played">Pld</abbr></th>
-            <th><abbr title="Won">W</abbr></th>
-            <th><abbr title="Drawn">D</abbr></th>
-            <th><abbr title="Lost">L</abbr></th>
-            <th><abbr title="Points">Pts</abbr></th>
-            <th>Qualification</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>  
+      <div class="container px-2 py-4">
+        <div class="tile is-ancestor">
+          <div class="tile is-vertical is-parent is-4">
+            <table class="table is-hoverable">
+              <thead>
+                <tr>
+                  <th><abbr title="Position(based on wins)">Number</abbr></th>
+                  <th>Player name</th>
+                  <th><abbr title="Played">Pld</abbr></th>
+                  <th><abbr title="Won">W</abbr></th>
+                  <th><abbr title="Drawn">D</abbr></th>
+                  <th><abbr title="Lost">L</abbr></th>
+                  <th><abbr title="Points">Pts</abbr></th>
+                  <th>Qualification</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </section>
     <section class="modals">
       <div class="modal" id="notEnoughPlayersErr">
@@ -234,10 +234,7 @@
         </div>
       </div>
     </section>
-
-  
   <script src="assets/scripts.js"></script>
   <script src="scripts.js"></script>
-
   </body>
 </html>
