@@ -131,9 +131,10 @@ const evenCompSingleWin = (name) => {
     } else {
         console.log(`${name} win Even`)
         nextRoundParticipants.push(name);
-        roundParticipants = roundParticipants.filter(el => el !== name);
-        playersListArr = playersListArr.filter(el => el !== name);  
-        playersListArrShift = playersListArrShift.filter(el => el !== name);
+
+        roundParticipants = arrayFilter(roundParticipants, name);
+        playersListArr = arrayFilter(playersListArr, name);
+        playersListArrShift = arrayFilter(playersListArrShift, name);
 
         if(nextRoundParticipants.length == 2) {
             nextRoundParticipants.forEach(el => {
@@ -169,20 +170,20 @@ const evenCompSingleLost = (array) => {
     resultsObjectUpdater(array[0], 'lose', 1);
     resultsObjectUpdater(array[0], 'level', 1);
 
-    if (resultsObject[array[0]].lose == '1' && resultsObject[array[0]].playedRounds == '1' ) {
-        resultsObject[array[0]].level = 'Disqualified';
-    }
+    // if (resultsObject[array[0]].lose == '1' && resultsObject[array[0]].playedRounds == '1' ) {
+    //     resultsObject[array[0]].level = 'Disqualified';
+    // }
 
     if (isOddGame) {
         console.log(`${array[0]} lost Odd`)
         secondOrderArr = secondOrderArr.slice(1, secondOrderArr.length);
     } else {
-        console.log(`${array[0]} lost Even`)
-        playersListArr = playersListArr.filter(el => el !== array[0]);
-        playersListArrShift = playersListArrShift.filter(el => el !== array[0]);
+        console.log(`${array[0]} lost Even`);
+
+        playersListArr = arrayFilter(playersListArr, array[0]);
+        playersListArrShift = arrayFilter(playersListArrShift, array[0]);
         roundParticipants = [];
-    
-    
+ 
         if(playersListArr.length === 0) {
             playersListArr = nextRoundParticipants;
             playersListArrShift = playersListArr;
@@ -197,18 +198,30 @@ const evenCompSingleLost = (array) => {
     updatePlayersTable();
 }
 
+let arrayFilter = (array, val) => {
+    return array.filter(el => el !== val);
+}
+
 let resultsObjectUpdater = (name, prop, val) => {
     resultsObject[name][prop] = resultsObject[name][prop] + val;
+
+    resultsObjectLogic(name, prop);
+}
+
+let resultsObjectLogic = (name, prop) => {
+    if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose') {
+        resultsObject[name].level = 'Disqualified';
+    }
 }
 
 /**
- *  Function beforeStartCheck
+ *  Function beforeStartCheckEvenCho
  * 
  *  Check if the players is selected in the dropdown menus
  *  if all selected returns true, else - false
  *
  */
-const beforeStartCheck = () => {
+const beforeStartCheckEvenCho = () => {
     const isChoosenPlayers = [];
 
     choosenButtons.forEach(el => {
@@ -572,7 +585,6 @@ counterMinus.forEach(el => {
 })
 
 let playerPointsUpdater = (el, val) => {
-    console.log(el, element);
     element = el.target.closest('.player-box').querySelector('.player-points').innerHTML;
     element = parseInt(element) + val;
     el.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
@@ -580,7 +592,12 @@ let playerPointsUpdater = (el, val) => {
 
 startRound.addEventListener('click', function() {
 
-    if (!beforeStartCheck() && playersListArr.length % 2 === 0 && !isOddGame) {
+    if ( beforeStartCheckEvenCho() && !isOddGame) {
+        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
+        return false;
+    }
+
+    if (!beforeStartCheckEvenCho() && playersListArr.length % 2 === 0 && !isOddGame) {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
             roundParticipants.push(player);
@@ -596,11 +613,7 @@ startRound.addEventListener('click', function() {
             })
         })
     } 
-    
-    if ( beforeStartCheck() && !isOddGame) {
-        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
-        return false;
-    }
+     
     counterSwitcher('enable');
 
     document.querySelectorAll(".player-points").forEach(el => {
@@ -623,7 +636,8 @@ dropdownsOff.forEach(el => {
     el.addEventListener('click', function(e) {
         dropdownChosen = this.parentElement.getElementsByTagName('span');
         dropdownChosen[0].innerText = e.target.innerText;
-        playersListArrShift = playersListArr.filter(el => el !== e.target.innerText);
+
+        playersListArrShift = arrayFilter(playersListArr, e.target.innerText);
 
         choosenAttr = this.parentElement.querySelector('[is-choosen]');
         choosenAttr.setAttribute('is-choosen', true);
@@ -631,9 +645,7 @@ dropdownsOff.forEach(el => {
         dropdownsOff.forEach(el => {
 
             if (!el.parentElement.classList.contains('is-active')) {
-
                 element = el.firstElementChild;
-
                 funcUpdateDropdownList(element);
             }
         })
@@ -679,11 +691,14 @@ getPlayerField.addEventListener('keypress', (event) => {
     }
 });
 
+/**
+ * Listener for remove players from list
+ */
 ulPlayer.addEventListener('click', function(e) {
     if (e.target.matches('button')) {
         let item = e.target.parentElement.innerText;
         let itemArr = playersListArr;
-        itemArr = playersListArr.filter(el => el !== item);
+        itemArr = arrayFilter(playersListArr, item);
         e.target.parentNode.remove();
         playersListArr = itemArr;
     }
