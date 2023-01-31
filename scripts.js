@@ -77,6 +77,13 @@ let funcNumberStages = () => {
     }
 }
 
+
+/**
+ * Function counterSwitcher
+ * 
+ * Enable od disable the +1 and -1 buttons. 
+ */
+
 let counterSwitcher = (state) => {
     document.querySelectorAll(".player-box .counter").forEach(el => {
         if (state == 'disable') {
@@ -113,12 +120,9 @@ const evenCompSingleWin = (name) => {
         resultsObject[name].level = 'Winner!';
     }
 
-    objectUpdater(name, 'playedRounds', 1);
-    // resultsObject[name].playedRounds = resultsObject[name].playedRounds + 1;
-    resultsObject[name].wins = resultsObject[name].wins + 1;
-    if ( resultsObject[name].playedRounds > 1) {
-        resultsObject[name].level = resultsObject[name].playedRounds;
-    }
+    resultsObjectUpdater(name, 'playedRounds', 1);
+    resultsObjectUpdater(name, 'wins', 1);
+    resultsObjectUpdater(name, 'level', 1);
 
     if (isOddGame) {
         console.log(`${name} win Odd`)
@@ -161,9 +165,9 @@ const evenCompSingleWin = (name) => {
  */
 const evenCompSingleLost = (array) => {
 
-    resultsObject[array[0]].playedRounds = resultsObject[array[0]].playedRounds + 1;
-    resultsObject[array[0]].lose = resultsObject[array[0]].lose + 1;
-    resultsObject[array[0]].level = resultsObject[array[0]].level + 1;
+    resultsObjectUpdater(array[0], 'playedRounds', 1);
+    resultsObjectUpdater(array[0], 'lose', 1);
+    resultsObjectUpdater(array[0], 'level', 1);
 
     if (resultsObject[array[0]].lose == '1' && resultsObject[array[0]].playedRounds == '1' ) {
         resultsObject[array[0]].level = 'Disqualified';
@@ -193,7 +197,7 @@ const evenCompSingleLost = (array) => {
     updatePlayersTable();
 }
 
-let objectUpdater = (name, prop, val) => {
+let resultsObjectUpdater = (name, prop, val) => {
     resultsObject[name][prop] = resultsObject[name][prop] + val;
 }
 
@@ -547,35 +551,32 @@ nextRound.addEventListener('click', () => {
 
 counterPlus.forEach(el => {
     el.addEventListener('click', function(e) {
-        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
-        element++;
-
+        playerPointsUpdater(e, 1);
         playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
-        
         playerName = playerEl.slice(0, -2);
-
-        resultsObject[playerName].points = element;
 
         if(element == goalsToWin ) {
             evenCompSingleWin(playerName);
         }
-
-        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
-
+        resultsObjectUpdater(playerName, 'points', 1);
         updatePlayersTable();
     })
 })
 
 counterMinus.forEach(el => {
     el.addEventListener('click', function(e) {
-
-        element = e.target.closest('.player-box').querySelector('.player-points').innerHTML;
-
-        element--;
-        e.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+        playerPointsUpdater(e, -1);      
+        resultsObjectUpdater(playerName, 'points', -1);
         updatePlayersTable()
     })
 })
+
+let playerPointsUpdater = (el, val) => {
+    console.log(el, element);
+    element = el.target.closest('.player-box').querySelector('.player-points').innerHTML;
+    element = parseInt(element) + val;
+    el.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+}
 
 startRound.addEventListener('click', function() {
 
@@ -690,9 +691,7 @@ ulPlayer.addEventListener('click', function(e) {
 
 startComp.addEventListener('click', function() {
     isGame = true;
-    check = checkNumPlayers();
-    if (check) {
-
+    if (checkNumPlayers()) {
         if ( playersListArr.length % 2  == 0  && !isOddGame) {
             console.log('Even Game');
             afterStartBlocking();
