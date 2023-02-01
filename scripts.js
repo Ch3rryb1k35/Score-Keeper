@@ -164,7 +164,7 @@ const evenCompSingleWin = (name) => {
  *  
  */
 const evenCompSingleLost = (array) => {
-console.log(array)
+
     resultsObjectUpdater(array[0], 'playedRounds', 1);
     resultsObjectUpdater(array[0], 'lose', 1);
     resultsObjectUpdater(array[0], 'level', 1);
@@ -541,7 +541,13 @@ nextRound.addEventListener('click', () => {
     }
 
     if(isOddGame && firstOrderArr.length == 0 && secondOrderArr == 0) {
-
+        newArray = Object.keys(resultsObject);
+        if (playersListArr.length == 3) {
+            console.log(playersListArr.length);
+        } 
+        if (playersListArr.length > 3) {
+            console.log(playersListArr.length);
+        } 
     }
 
     nextRound.setAttribute('disabled', '');
