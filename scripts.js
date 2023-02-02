@@ -114,10 +114,6 @@ let counterSwitcher = (state) => {
 const evenCompSingleWin = (name) => {
     counterSwitcher('disable');
 
-    // if (numbrOfStages.length == 1 && !isOddGame) {
-    //     resultsObject[name].level = 'Winner!';
-    // }
-
     resultsObjectUpdater(name, 'playedRounds', 1);
     resultsObjectUpdater(name, 'wins', 1);
     resultsObjectUpdater(name, 'level', 1);
@@ -135,9 +131,9 @@ const evenCompSingleWin = (name) => {
         playersListArr = arrayFilter(playersListArr, name);
         playersListArrShift = arrayFilter(playersListArrShift, name);
 
-        if(nextOddRoundParticipants.length == 2) {
-            nextOddRoundParticipants.forEach(el => {
-                resultsObject[el].level = 'Enter Final';
+        if(playersListArr.length == 2) {
+            playersListArr.forEach(el => {
+                resultsObject[el].level = 'Enter the Final';
             })
         }
 
@@ -460,6 +456,9 @@ const oddNumberGame = () => {
         el.classList.add('is-hidden');
     })
 
+    if( playersListArr % 2 != 0 && secondOrderArr.length == 0) {
+        createOddArrays(playersListArr);
+    }
     isOddGame = true;
 
     playerLabels[0].querySelector('.player-name').innerText = `${firstOrderArr[0]}: `;
@@ -484,64 +483,13 @@ let oddNumberGameResults = () => {
 }
 
 /**
- * Function arrayEquals
+ * Function oddGameLogic
  * 
- * compare two arrays 
+ * Collect the odd number game results and creates array of players for the next round; 
  */
-
-function arrayEquals(a, b) {
-    return Array.isArray(a) &&
-        Array.isArray(b) &&
-        a.length === b.length &&
-        a.every((val, index) => val === b[index]);
-}
-
-/**
- * END Functions
- */
-
-/**
- * Events
- */
-
-
-goalsNumber.addEventListener('click', function(e) {
-    e.preventDefault();
-    goalsToWin = this.form[0].value;
-})
-
-nextRound.addEventListener('click', () => {
-
-    if (!isOddGame) {
-        dropdownsOn.forEach(el => {
-            el.querySelector('.button').removeAttribute('disabled');
-            el.querySelector('.button').setAttribute('is-choosen', false);
-        });
-        dropdownsOn.forEach(el => {
-            el.querySelector('button span').innerText = '---';
-        })
-        dropdownsOff.forEach(el => {
-            element = el.children[0];
-            funcUpdateDropdownList(element, playersListArr);
-        })
-
-        document.querySelectorAll('.player-label').forEach(el => {
-            el.classList.add('is-hidden');
-        })
-    }
-
-    if (arrayEquals(nextOddRoundParticipants, playersListArr) && playersListArr % 2 !== 0 && isGame ) {
-        isOddGame = true;
-
-        if (nextOddRoundParticipants.length >=2 ) {
-            createOddArrays(nextOddRoundParticipants);
-            nextOddRoundParticipants = [];
-        }
-        oddNumberGame();
-    }
-
+let oddGameLogic = () => {
     if(isOddGame && firstOrderArr.length == 0 && secondOrderArr == 0) {
-        newArray = Object.keys(resultsObject);
+
         if (playersListArr.length == 3) {
             console.log(playersListArr.length);
             let oddWinsWin = [];
@@ -609,6 +557,7 @@ nextRound.addEventListener('click', () => {
             updatePlayersTable();
         } 
         if (playersListArr.length > 3) {
+
             let oddlostWins = [];
             let oddlostPts = [];
             playersListArr.forEach(el => {
@@ -616,8 +565,8 @@ nextRound.addEventListener('click', () => {
                 oddlostPts.push(parseInt(resultsObject[el].points));
             });
 
-            minNumWins = Math.min(...oddWinsWin);
-            minNumPts = Math.min(...oddWinsPts);
+            minNumWins = Math.min(...oddlostWins);
+            minNumPts = Math.min(...oddlostPts);
 
             counter = 0;
             oddlostWins.forEach(el => {
@@ -627,24 +576,105 @@ nextRound.addEventListener('click', () => {
             })
 
             if (counter == 1) {
-                playerName = playersListArr[oddWinsWin.indexOf(minNumWins)];
+                playerName = playersListArr[oddlostWins.indexOf(minNumWins)];
                 playersListArr = arrayFilter(playersListArr, playerName);
             }
 
             if (counter > 1) {
 
                 counterPts = 0;
+                arrayLost =[];
                 oddlostPts.forEach(el => {
                     if (el == minNumWins) {
                         counterPts++;
+                        arrayLost.push(el);
                     }
                 })
 
                 if (counterPts == 1) {
+                    playerName = playersListArr[oddlostPts.indexOf(minNumPts)];
+                    playersListArr = arrayFilter(playersListArr, playerName);
+                    isOddGame = false;
+                }
+                else {
+                    arrayLost.forEach(el => {
+                        playerName = playersListArr[oddlostPts.indexOf(minNumPts)];
+                        playersListArr = arrayFilter(playersListArr, playerName);
+                    })
 
+                    if (playersListArr.length % 2 !==0) {
+                        isOddGame = true;
+
+                        oddNumberGame();
+                    } 
+                    else {
+                        isOddGame = false;
+                    }
                 }
             }
         } 
+    }
+}
+
+/**
+ * Function arrayEquals
+ * 
+ * compare two arrays 
+ */
+
+function arrayEquals(a, b) {
+    return Array.isArray(a) &&
+        Array.isArray(b) &&
+        a.length === b.length &&
+        a.every((val, index) => val === b[index]);
+}
+
+/**
+ * END Functions
+ */
+
+/**
+ * Events
+ */
+
+
+goalsNumber.addEventListener('click', function(e) {
+    e.preventDefault();
+    goalsToWin = this.form[0].value;
+})
+
+nextRound.addEventListener('click', () => {
+
+    if (!isOddGame) {
+        dropdownsOn.forEach(el => {
+            el.querySelector('.button').removeAttribute('disabled');
+            el.querySelector('.button').setAttribute('is-choosen', false);
+        });
+        dropdownsOn.forEach(el => {
+            el.querySelector('button span').innerText = '---';
+        })
+        dropdownsOff.forEach(el => {
+            element = el.children[0];
+            funcUpdateDropdownList(element, playersListArr);
+        })
+
+        document.querySelectorAll('.player-label').forEach(el => {
+            el.classList.add('is-hidden');
+        })
+    }
+    else {
+        oddNumberGame();
+        oddGameLogic();
+    }
+
+    if (arrayEquals(nextOddRoundParticipants, playersListArr) && playersListArr % 2 !== 0 && isGame ) {
+        isOddGame = true;
+
+        if (nextOddRoundParticipants.length >=2 ) {
+            createOddArrays(nextOddRoundParticipants);
+            nextOddRoundParticipants = [];
+        }
+        oddNumberGame();
     }
 
     nextRound.setAttribute('disabled', '');
@@ -710,6 +740,10 @@ startRound.addEventListener('click', function() {
     counterSwitcher('enable');
     
     document.querySelectorAll(".player-points").forEach(el => {
+        el.classList.remove('is-hidden');
+    })
+
+    document.querySelectorAll(".player-label").forEach(el => {
         el.classList.remove('is-hidden');
     })
 
