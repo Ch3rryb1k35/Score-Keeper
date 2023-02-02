@@ -199,6 +199,10 @@ const evenCompSingleLost = (array) => {
     updatePlayersTable();
 }
 
+let oddRoundResults = () => {
+
+}
+
 let arrayFilter = (array, val) => {
     return array.filter(el => el !== val);
 }
@@ -554,7 +558,7 @@ nextRound.addEventListener('click', () => {
     if(isOddGame && firstOrderArr.length == 0 && secondOrderArr == 0) {
         newArray = Object.keys(resultsObject);
         if (playersListArr.length == 3) {
-            console.log(playersListArr.length);
+
             let oddWinsWin = [];
             let oddWinsPts = [];
             playersListArr.forEach(el => {
@@ -575,7 +579,7 @@ nextRound.addEventListener('click', () => {
 
             console.log('counter', counter)
             
-            if (counter === 1) {
+            if (counter == 1) {
                 let winnerWins = playersListArr[oddWinsWin.indexOf(maxNumWins)];
                 resultsObject[winnerWins].level = 'Winner';
 
@@ -621,12 +625,7 @@ nextRound.addEventListener('click', () => {
         } 
         if (playersListArr.length > 3) {
 
-            let oddlostWins = [];
-            let oddlostPts = [];
-            playersListArr.forEach(el => {
-                oddlostWins.push(parseInt(resultsObject[el].wins));
-                oddlostPts.push(parseInt(resultsObject[el].points));
-            });
+
 
             minNumWins = Math.min(...oddlostWins);
             minNumPts = Math.min(...oddlostPts);
