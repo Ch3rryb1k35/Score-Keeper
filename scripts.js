@@ -565,11 +565,12 @@ nextRound.addEventListener('click', () => {
             console.log('counter', counter)
             
             if (counter === 1) {
-                console.log('winner by wins');
                 let winnerWins = playersListArr[oddWinsWin.indexOf(maxNumWins)];
-                console.log(maxNumWins, winnerWins, oddWinsWin.indexOf(maxNumWins) );
                 resultsObject[winnerWins].level = 'Winner';
+
+                console.log(`${playersListArr[oddWinsWin.indexOf(maxNumWins)]} has won the competition`);
             }
+
             if (counter > 1) {
                 maxNumPts = Math.max(...oddWinsPts);
                 console.log('maxNumPts', maxNumPts)
@@ -580,38 +581,69 @@ nextRound.addEventListener('click', () => {
                     }
                 })
 
-
                 if (counterPts == 1 ) {
                     console.log('winner bt pts');
                     let winnerPts = playersListArr.indexOf(oddWinsPts.indexOf(maxNumPts));
                     resultsObject[winnerPts].level = 'Winner';
                 }
 
-                if (counterPts > 1 ) {
-                    if (counterPts = playersListArr.length) {
-
-                        console.log('do odd game')
-                        createOddArrays(playersListArr);
-                        oddNumberGame();
-                    } 
-                    else {
-                        console.log('check the pts')
-                        oddWinsPts.forEach(el => {
-                            if (el == maxNumPts) {
-                                playersListArrShift.push(playersListArr[oddWinsPts.indexOf(maxNumPts)]);
-                                playersListArr = playersListArrShift;
-                                playersListArrShift = [];
-                            }
-                        })
-                    }
+                if (counterPts = playersListArr.length ) {
+                    console.log('do odd game');
+                    createOddArrays(playersListArr);
+                    oddNumberGame();
                 }
-
+                    
+                if (counterPts = 2 ) {
+                    console.log('check the pts');
+                    minWinPts = Math.min(...oddWinsPts);
+                    playerName = playersListArr[oddWinsPts.indexOf(minWinPts)];
+                    oddWinsPts.forEach(el => {
+                        if (el == minWinPts) {
+                            playersListArr = arrayFilter(playersListArr, minWinPts);
+                            isOddGame = false;
+                        }
+                    })
+                }
             }
 
             updatePlayersTable();
         } 
         if (playersListArr.length > 3) {
-            console.log(playersListArr.length);
+            let oddlostWins = [];
+            let oddlostPts = [];
+            playersListArr.forEach(el => {
+                oddlostWins.push(parseInt(resultsObject[el].wins));
+                oddlostPts.push(parseInt(resultsObject[el].points));
+            });
+
+            minNumWins = Math.min(...oddWinsWin);
+            minNumPts = Math.min(...oddWinsPts);
+
+            counter = 0;
+            oddlostWins.forEach(el => {
+                if (el == minNumWins) {
+                    counter++;
+                }
+            })
+
+            if (counter == 1) {
+                playerName = playersListArr[oddWinsWin.indexOf(minNumWins)];
+                playersListArr = arrayFilter(playersListArr, playerName);
+            }
+
+            if (counter > 1) {
+
+                counterPts = 0;
+                oddlostPts.forEach(el => {
+                    if (el == minNumWins) {
+                        counterPts++;
+                    }
+                })
+
+                if (counterPts == 1) {
+
+                }
+            }
         } 
     }
 
