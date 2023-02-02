@@ -150,9 +150,12 @@ const evenCompSingleWin = (name) => {
 }
 
 let evenGame = () => {
+
+    isOddGame = false;
+
     list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
     listForDropdown(list, playersListArr);
-    isOddGame = false;
+
 }
 
 /**
@@ -532,11 +535,12 @@ nextRound.addEventListener('click', () => {
             element = el.children[0];
             funcUpdateDropdownList(element, playersListArr);
         })
-
+    
         document.querySelectorAll('.player-label').forEach(el => {
             el.classList.add('is-hidden');
         })
-    }
+    } else {
+    
     if (arrayEquals(nextOddRoundParticipants, playersListArr) && playersListArr % 2 !== 0 && isGame ) {
         isOddGame = true;
 
@@ -544,7 +548,7 @@ nextRound.addEventListener('click', () => {
             createOddArrays(nextOddRoundParticipants);
             nextOddRoundParticipants = [];
         }
-        oddNumberGame();
+
     }
 
     if(isOddGame && firstOrderArr.length == 0 && secondOrderArr == 0) {
@@ -597,7 +601,7 @@ nextRound.addEventListener('click', () => {
                 if (counterPts == playersListArr.length ) {
                     console.log('do odd game');
                     createOddArrays(playersListArr);
-                    oddNumberGame();
+                    
                 }
                     
                 if (counterPts == 2 ) {
@@ -662,7 +666,7 @@ nextRound.addEventListener('click', () => {
                     })
 
                     if (playersListArr.length % 2 !==0) {
-                        oddNumberGame();
+                        
                     } 
                     else {
                         isOddGame = false;
@@ -671,6 +675,9 @@ nextRound.addEventListener('click', () => {
             }
         } 
     }
+    oddNumberGame();
+}
+
 
     nextRound.setAttribute('disabled', '');
     startRound.removeAttribute('disabled');
