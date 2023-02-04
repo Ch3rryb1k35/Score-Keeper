@@ -112,10 +112,6 @@ let getNewPlayer = () => {
     player.value = '';
 }
 
-let checkPlayerDuplicate = (player) => {
-    
-
-}
 
 /* Create results table. Use only once. */
 
