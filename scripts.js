@@ -44,7 +44,7 @@ let playersListArrShift = [];
 let roundParticipants = [];
 let resultsObject = {};
 let goalsToWin = 2;
-// let numbrOfStages = [];
+let numbrOfStages = [];
 let randMatches = [];
 
 /**
@@ -66,17 +66,17 @@ let isGame = false;
  * based on the number of players
  */
 
-// let funcNumberStages = () => {
-//     numbrOfStages[0] = playersListArr.length;
-//     num = playersListArr.length;
-//     counter = 1;
-//     while (num > 3) {
-//         num = Math.round(num / 2);
-//         if (num == 1 ) { break; }
-//         numbrOfStages[counter] = num;
-//         counter++;
-//     }
-// }
+let funcNumberStages = () => {
+    numbrOfStages[0] = playersListArr.length;
+    num = playersListArr.length;
+    counter = 1;
+    while (num > 3) {
+        num = Math.round(num / 2);
+        numbrOfStages[counter] = num;
+        counter++;
+    }
+    console.log(numbrOfStages)
+}
 
 /**
  * Function counterSwitcher
@@ -112,6 +112,7 @@ let counterSwitcher = (state) => {
  * 
  */
 const evenCompSingleWin = (name) => {
+    
     counterSwitcher('disable');
 
     resultsObjectUpdater(name, 'playedRounds', 1);
@@ -130,7 +131,7 @@ const evenCompSingleWin = (name) => {
         roundParticipants = arrayFilter(roundParticipants, name);
         playersListArr = arrayFilter(playersListArr, name);
         playersListArrShift = arrayFilter(playersListArrShift, name);
-
+console.log('11', playersListArr, nextOddRoundParticipants, roundParticipants);
         if(playersListArr.length == 2) {
             playersListArr.forEach(el => {
                 resultsObject[el].level = 'Enter the Final';
@@ -140,7 +141,7 @@ const evenCompSingleWin = (name) => {
         if(nextOddRoundParticipants.length == 1 && playersListArr.length == 1 ) {
             resultsObject[name].level = 'Winner';
         }
-
+    console.log('2', playersListArr, nextOddRoundParticipants, roundParticipants);
         playersListArrShift = roundParticipants;
         evenCompSingleLost(playersListArrShift);
     }
@@ -150,12 +151,9 @@ const evenCompSingleWin = (name) => {
 }
 
 let evenGame = () => {
-
     isOddGame = false;
-
     list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
     listForDropdown(list, playersListArr);
-
 }
 
 /**
@@ -180,15 +178,16 @@ const evenCompSingleLost = (array) => {
 
     } else {
         console.log(`${array[0]} lost Even`);
-
+        console.log('E1', playersListArr, nextOddRoundParticipants, roundParticipants);
         playersListArr = arrayFilter(playersListArr, array[0]);
         playersListArrShift = arrayFilter(playersListArrShift, array[0]);
         roundParticipants = [];
- 
-        if(playersListArr.length === 0) {
+        console.log('E2', playersListArr, nextOddRoundParticipants, roundParticipants);
+        if (playersListArr.length == 0 && isGame) {
             playersListArr = nextOddRoundParticipants;
             playersListArrShift = playersListArr;
         }
+        console.log('E3', playersListArr, nextOddRoundParticipants, roundParticipants);
         evenGame();
     }
 
@@ -527,6 +526,9 @@ goalsNumber.addEventListener('click', function(e) {
 
 nextRound.addEventListener('click', () => {
 
+    if (playersListArr.length == 2 && !isOddGame && roundParticipants.length == 0) {
+        console.log('we are here');
+    }
     if (!isOddGame) {
         dropdownsOn.forEach(el => {
             el.querySelector('.button').removeAttribute('disabled');
@@ -852,7 +854,7 @@ startComp.addEventListener('click', function() {
         }
         startComp.setAttribute('disabled', '');
     }
-    // funcNumberStages();
+    funcNumberStages();
     createResultsObject(playersListArr, resultsObject);
 })
 
