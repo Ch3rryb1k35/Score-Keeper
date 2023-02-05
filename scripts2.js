@@ -76,7 +76,6 @@ let getNewPlayer = () => {
 
     if (playersListArr.length >= 1) {
         playersListArr.forEach(el => {
-            console.log(el, player.value);
             if (el == player.value) {
                 document.querySelector('#duplicatePlayer').classList.add('is-active');
                 isDuplicated = true;
@@ -160,7 +159,6 @@ let arrayFilter = (array, val) => {
 // Clear results table
 const clearPlayersTable = (val, player) => {
     let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
-    console.log(val, player);
     if (val == 'remove') {
         let resultsTableRows = document.querySelectorAll('#tableSection tbody .cell-playername');
         resultsTableRows.forEach(el => {
@@ -182,7 +180,9 @@ const updatePlayersTable = () => {
 
     clearPlayersTable();
 
-    for (let i = 0; i<resultsTableRows.length; i++) {
+    let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
+
+    for (let i = 0; i< resultsTableRows.length; i++) {
         if (resultsTableRows[i].classList.contains('cell-playername') ) {
             player = resultsTableRows[i].innerHTML;
             resultsTableRows[i+1].innerHTML = resultsObject[player].playedRounds;
@@ -204,17 +204,20 @@ let updateResultsObject = (array, object) => {
     if (array.length != Object.keys(object).length) {
         Object.keys(object).forEach(el => {
             if (!(array.includes(el))) {
-                console.log(el, object[el]);
                 delete object[el];
             }
         })
     }
     for (let i = 0; i < array.length; i++) {
+        
         let plname = array[i]; 
+        console.log(plname);
+
         info = {};
         for(let y = 0; y < resultsObjectProperties.length; y++) {
-            if (resultsObjectProperties[y] == 'level' && resultsObjectProperties[y] == 0) {
+            if (resultsObjectProperties[y] == 'level' && resultsObject[y] == 0) {
                 info[resultsObjectProperties[y]] = 'Enter the Qualification';
+                console.log(resultsObjectProperties[y], object[plname])
             } else {
                 info[resultsObjectProperties[y]] = 0;
             }
@@ -223,6 +226,123 @@ let updateResultsObject = (array, object) => {
     }
 }
 
+// hide fields where we can add players and choose the number of points to win and removo possibility of delete players
+const afterStartBlocking = () => {
+    document.querySelector('#playersCont').classList.add('is-hidden');
+    removeButtons = document.querySelectorAll('#players-list li button');
+    removeButtons.forEach(element => {
+        element.classList.add('is-hidden');
+    });
+}
+
+// define the game with even number of players
+let evenGame = () => {
+    isOddGame = false;
+    list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
+    list.forEach(li => {
+        playersListArr.forEach(item => {
+            newListPlayer = document.createElement('A');
+            newListPlayer.classList.add('dropdown-item');
+            newListPlayer.append(item);
+            li.appendChild(newListPlayer);
+        })
+    })
+}
+
+/**
+ * Define the game with the odd number of players
+ * Remove the possibility of adding players manually and fill the player name and count fields. 
+ */
+
+ const oddNumberGame = () => {
+    isOddGame = true;
+    dropdownsOn.forEach(el => {
+        el.classList.add('is-hidden');
+    })
+
+    if( playersListArr % 2 != 0 && secondOrderArr.length == 0) {
+        createOddArrays(playersListArr);
+    }
+
+    playerLabels[0].querySelector('.player-name').innerText = `${firstOrderArr[0]}: `;
+    playerLabels[1].querySelector('.player-name').innerText = `${secondOrderArr[0]}: `;
+
+    playerLabels[0].querySelector('.player-points').innerText = '0';
+    playerLabels[1].querySelector('.player-points').innerText = '0';
+}
+
+/**
+ * Creates two arrays. One of them has the shifted order. Arrays will be used for stages
+ * where the manual choosing players will be unavailable
+ */
+ let createOddArrays = (array) => {
+    arrlength = array.length;
+    for(let i = 0; i <= arrlength-1; i++) {
+        firstOrderArr[i] = array[i];
+        secondOrderArr[i] = array[i+1];
+        if (i == arrlength-1) { secondOrderArr[i] = array[0]; }
+    }
+}
+
+// update dropdown list depending on player name choosen in another dropdown 
+let funcUpdateDropdownList = (element, array) => {
+    while(element.firstElementChild) {
+        element.removeChild(element.lastElementChild);
+    }
+    array.forEach(item => {
+        newListPlayer = document.createElement('A');
+        newListPlayer.classList.add('dropdown-item');
+        newListPlayer.append(item);
+        element.appendChild(newListPlayer);
+    })
+}
+
+/**
+ *  Check if the players is selected in the dropdown menus
+ *  if all selected returns true, else - false
+ */
+ const beforeStartCheckEvenCho = () => {
+    const isChoosenPlayers = [];
+
+    choosenButtons.forEach(el => {
+        if (el.querySelector('[is-choosen]').getAttribute('is-choosen') === 'true') {
+            isChoosenPlayers.push(true);
+        } else {
+            isChoosenPlayers.push(false);
+        }
+    })
+    return result = isChoosenPlayers.includes(false);
+}
+
+/**
+ * Enable or disable the +1 and -1 buttons. 
+ */
+
+ let counterSwitcher = (state) => {
+    document.querySelectorAll(".player-box .counter").forEach(el => {
+        if (state == 'disable') {
+            el.setAttribute('disabled', '');
+        }
+        if (state == 'enable') {
+            el.removeAttribute('disabled');
+        }
+    })
+}
+
+let resultsObjectUpdater = (name, prop, val) => {
+    resultsObject[name][prop] = resultsObject[name][prop] + val;
+
+    resultsObjectLogic(name, prop, val);
+}
+
+let resultsObjectLogic = (name, prop, val) => {
+    if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose' && !isOddGame) {
+        resultsObject[name].level = 'Disqualified';
+    }
+    if (resultsObject[name][prop] > 1 && resultsObject[name]['win'] > 1 && prop == 'level') {
+        resultsObject[name].level = val;
+    }
+}
 
 /**
  * END Functions
@@ -280,16 +400,123 @@ startComp.addEventListener('click', function() {
         }
         else {
             console.log('Odd Game');
-            isOddGame = true;
             afterStartBlocking();
-            createOddArrays(playersListArr);
             oddNumberGame();
         }
         startComp.setAttribute('disabled', '');
     }
-    funcNumberStages();
+    // funcNumberStages();
 })
 
+// players dropdown list activation
+dropdownsOn.forEach(el => {
+    el.addEventListener('click', function() {
+        if ( playersListArr.length !== 0 && isDropdownActive === false) {
+            el.classList.add('is-active');
+            isDropdownActive = true;
+        }
+    });
+})
+
+// players dropdown list deactivation
+dropdownsOff.forEach(el => {
+    el.addEventListener('click', function(e) {
+        dropdownChosen = this.parentElement.getElementsByTagName('span');
+        dropdownChosen[0].innerText = e.target.innerText;
+
+        playersListArrShift = arrayFilter(playersListArr, e.target.innerText);
+
+        choosenAttr = this.parentElement.querySelector('[is-choosen]');
+        choosenAttr.setAttribute('is-choosen', true);
+     
+        dropdownsOff.forEach(el => {
+
+            if (!el.parentElement.classList.contains('is-active')) {
+                element = el.firstElementChild;
+                funcUpdateDropdownList(element, playersListArrShift);
+            }
+        })
+
+        el.parentElement.classList.remove('is-active');
+        isDropdownActive = false;
+        e.stopPropagation();
+    })
+})
+
+//Start round button
+startRound.addEventListener('click', function() {
+
+    if ( beforeStartCheckEvenCho() && !isOddGame) {
+        document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
+        return false;
+    }
+
+    if (!beforeStartCheckEvenCho() && playersListArr.length % 2 === 0 && !isOddGame) {
+        choosenButtons.forEach(el => {
+            player = el.querySelector('button[is-choosen] span').innerText;
+            roundParticipants.push(player);
+            playerName = el.children[0].innerText;
+            el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
+            el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
+            el.closest('.player-box').querySelector('.player-points ').innerHTML = 0;
+
+            el.querySelector('button[is-choosen]').setAttribute('disabled', '');
+
+            document.querySelectorAll('.player-label').forEach(el => {
+                el.classList.remove('is-hidden');
+            })
+        })
+    } 
+    
+    if (isOddGame) {
+        oddNumberGame();
+    }
+
+    counterSwitcher('enable');
+    
+    document.querySelectorAll(".player-points").forEach(el => {
+        el.classList.remove('is-hidden');
+    })
+
+    document.querySelectorAll(".player-label").forEach(el => {
+        el.classList.remove('is-hidden');
+    })
+
+    startRound.setAttribute('disabled', '');
+})
+
+// +1 counter
+counterPlus.forEach(el => {
+    el.addEventListener('click', function(e) {
+        playerPointsUpdater(e, 1);
+        playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
+        playerName = playerEl.slice(0, -2);
+
+        // if(element == goalsToWin ) {
+        //     evenCompSingleWin(playerName);
+        // }
+        resultsObjectUpdater(playerName, 'points', 1);
+        updateResultsObject();
+        updatePlayersTable();
+    })
+})
+
+// -1 counter
+
+counterMinus.forEach(el => {
+    el.addEventListener('click', function(e) {
+        playerPointsUpdater(e, -1);      
+        resultsObjectUpdater(playerName, 'points', -1);
+        updatePlayersTable()
+    })
+})
+
+// updade the visual counter
+let playerPointsUpdater = (el, val) => {
+    element = el.target.closest('.player-box').querySelector('.player-points').innerHTML;
+    element = parseInt(element) + val;
+    el.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+}
 /**
  * END Events
  */
