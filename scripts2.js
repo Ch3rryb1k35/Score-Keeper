@@ -82,7 +82,7 @@ let getNewPlayer = () => {
             }
         })
     }
-
+    console.log(player, player.value);
     if (player.value.length !== 0 && !isDuplicated) {
         liPlayer = document.createElement('LI');
         liPlayer.append(player.value);
@@ -91,9 +91,9 @@ let getNewPlayer = () => {
         liPlayer.append(liButton);
         ulPlayer.append(liPlayer);
         playersListArr.push(player.value);
-        
         isDuplicated = false;
-        createPlayersTable(player);
+        createPlayersTable(player.value);
+        player.value = '';
     } else {
         document.querySelector('#emptyPlayerAddErr').classList.add('is-active');
         return false;
@@ -106,19 +106,14 @@ let getNewPlayer = () => {
         ulPlayer.parentElement.classList.remove('is-hidden');
         playersListVis = true;
     }
-
-
-    player.value = '';
 }
 
 
 /* Create results table. Use only once. */
 
 const createPlayersTable = (player) => {
-
-    updateResultsObject(playersListArr, resultsObject);
-
     tr = document.createElement('TR');
+    console.log(player);
     for (let i = 1; i < 9; i++ ) {
         if (i == 1) {
             th = document.createElement('TH');
@@ -126,7 +121,7 @@ const createPlayersTable = (player) => {
             tr.appendChild(th);
         } else {
             td = document.createElement('TD');
-            let cont = (i === 2) ? player.value : (i === 8) ? 'Enter the Qualification' : '0';
+            let cont = (i == 2) ? player : (i == 8) ? 'Enter the Qualification' : '0';
             td.append(cont);
             if (i == 2) {
                 td.classList.add('cell-playername')
@@ -135,6 +130,8 @@ const createPlayersTable = (player) => {
         }
     }
     resultsTable.querySelector('tbody').appendChild(tr);
+
+    updateResultsObject(playersListArr, resultsObject);
 }
 
 /**
@@ -176,7 +173,7 @@ const clearPlayersTable = (val, player) => {
 }
 
 // Update results table
-const updatePlayersTable = () => {
+const updatePlayersTable = (player) => {
 
     clearPlayersTable();
 
@@ -211,19 +208,17 @@ let updateResultsObject = (array, object) => {
     for (let i = 0; i < array.length; i++) {
         
         let plname = array[i]; 
-        console.log(plname);
-
         info = {};
         for(let y = 0; y < resultsObjectProperties.length; y++) {
             if (resultsObjectProperties[y] == 'level' && resultsObject[y] == 0) {
                 info[resultsObjectProperties[y]] = 'Enter the Qualification';
-                console.log(resultsObjectProperties[y], object[plname])
             } else {
                 info[resultsObjectProperties[y]] = 0;
             }
         }
         object[plname] = info;
     }
+    updatePlayersTable();
 }
 
 // hide fields where we can add players and choose the number of points to win and removo possibility of delete players
@@ -332,6 +327,7 @@ let funcUpdateDropdownList = (element, array) => {
 let resultsObjectUpdater = (name, prop, val) => {
     resultsObject[name][prop] = resultsObject[name][prop] + val;
 
+    updatePlayersTable();
     resultsObjectLogic(name, prop, val);
 }
 
@@ -495,9 +491,7 @@ counterPlus.forEach(el => {
         // if(element == goalsToWin ) {
         //     evenCompSingleWin(playerName);
         // }
-        resultsObjectUpdater(playerName, 'points', 1);
         updateResultsObject();
-        updatePlayersTable();
     })
 })
 
@@ -505,17 +499,18 @@ counterPlus.forEach(el => {
 
 counterMinus.forEach(el => {
     el.addEventListener('click', function(e) {
-        playerPointsUpdater(e, -1);      
-        resultsObjectUpdater(playerName, 'points', -1);
-        updatePlayersTable()
+        playerPointsUpdater(e, -1);        
     })
 })
 
 // updade the visual counter
 let playerPointsUpdater = (el, val) => {
     element = el.target.closest('.player-box').querySelector('.player-points').innerHTML;
+    player = el.target.closest('.player-box').querySelector('.player-name').innerHTML;
     element = parseInt(element) + val;
     el.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
+
+    resultsObjectUpdater(playerName, 'points', val);
 }
 /**
  * END Events

@@ -209,7 +209,7 @@ let arrayFilter = (array, val) => {
 let resultsObjectUpdater = (name, prop, val) => {
     resultsObject[name][prop] = resultsObject[name][prop] + val;
 
-    resultsObjectLogic(name, prop, val);
+    resultsObjectLogic(name, prop);
 }
 
 let resultsObjectLogic = (name, prop, val) => {
@@ -217,7 +217,7 @@ let resultsObjectLogic = (name, prop, val) => {
         resultsObject[name].level = 'Disqualified';
     }
     if (resultsObject[name][prop] > 1 && resultsObject[name]['win'] > 1 && prop == 'level') {
-        resultsObject[name].level = val;
+        resultsObject[name].level = 'val';
     }
 }
 
