@@ -55,6 +55,7 @@ let isDropdownActive = false;
 let isPlayerSelected = false;
 let isOddGame = false;
 let isGame = false;
+let isResultsObgect = false;
 
 /**
  * Functions
@@ -82,7 +83,6 @@ let getNewPlayer = () => {
             }
         })
     }
-    console.log(player, player.value);
     if (player.value.length !== 0 && !isDuplicated) {
         liPlayer = document.createElement('LI');
         liPlayer.append(player.value);
@@ -113,7 +113,6 @@ let getNewPlayer = () => {
 
 const createPlayersTable = (player) => {
     tr = document.createElement('TR');
-    console.log(player);
     for (let i = 1; i < 9; i++ ) {
         if (i == 1) {
             th = document.createElement('TH');
@@ -130,8 +129,6 @@ const createPlayersTable = (player) => {
         }
     }
     resultsTable.querySelector('tbody').appendChild(tr);
-
-    updateResultsObject(playersListArr, resultsObject);
 }
 
 /**
@@ -182,6 +179,7 @@ const updatePlayersTable = (player) => {
     for (let i = 0; i< resultsTableRows.length; i++) {
         if (resultsTableRows[i].classList.contains('cell-playername') ) {
             player = resultsTableRows[i].innerHTML;
+            console.log(resultsObject[player])
             resultsTableRows[i+1].innerHTML = resultsObject[player].playedRounds;
             resultsTableRows[i+2].innerHTML = resultsObject[player].wins;
             resultsTableRows[i+3].innerHTML = resultsObject[player].drawn;
@@ -197,7 +195,7 @@ const updatePlayersTable = (player) => {
  */
 
 let updateResultsObject = (array, object) => {
-
+   
     if (array.length != Object.keys(object).length) {
         Object.keys(object).forEach(el => {
             if (!(array.includes(el))) {
@@ -205,20 +203,7 @@ let updateResultsObject = (array, object) => {
             }
         })
     }
-    for (let i = 0; i < array.length; i++) {
-        
-        let plname = array[i]; 
-        info = {};
-        for(let y = 0; y < resultsObjectProperties.length; y++) {
-            if (resultsObjectProperties[y] == 'level' && resultsObject[y] == 0) {
-                info[resultsObjectProperties[y]] = 'Enter the Qualification';
-            } else {
-                info[resultsObjectProperties[y]] = 0;
-            }
-        }
-        object[plname] = info;
-    }
-    updatePlayersTable();
+
 }
 
 // hide fields where we can add players and choose the number of points to win and removo possibility of delete players
@@ -325,9 +310,10 @@ let funcUpdateDropdownList = (element, array) => {
 }
 
 let resultsObjectUpdater = (name, prop, val) => {
-    resultsObject[name][prop] = resultsObject[name][prop] + val;
 
-    updatePlayersTable();
+    resultsObject[name][prop] = resultsObject[name][`${prop}`] + val;
+
+    updatePlayersTable(name);
     resultsObjectLogic(name, prop, val);
 }
 
@@ -491,7 +477,6 @@ counterPlus.forEach(el => {
         // if(element == goalsToWin ) {
         //     evenCompSingleWin(playerName);
         // }
-        updateResultsObject();
     })
 })
 
@@ -507,10 +492,12 @@ counterMinus.forEach(el => {
 let playerPointsUpdater = (el, val) => {
     element = el.target.closest('.player-box').querySelector('.player-points').innerHTML;
     player = el.target.closest('.player-box').querySelector('.player-name').innerHTML;
+
+    player = player.slice(0, -2);
     element = parseInt(element) + val;
     el.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
 
-    resultsObjectUpdater(playerName, 'points', val);
+    resultsObjectUpdater(player, 'points', val);
 }
 /**
  * END Events
