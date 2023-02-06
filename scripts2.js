@@ -75,6 +75,7 @@ let getNewPlayer = () => {
     player = getPlayer.parentElement.firstElementChild.firstElementChild;
     let isDuplicated = false;
 
+// check if entered name was added before
     if (playersListArr.length >= 1) {
         playersListArr.forEach(el => {
             if (el == player.value) {
@@ -83,6 +84,8 @@ let getNewPlayer = () => {
             }
         })
     }
+
+// add new player if its name is unique
     if (player.value.length !== 0 && !isDuplicated) {
         liPlayer = document.createElement('LI');
         liPlayer.append(player.value);
@@ -91,14 +94,18 @@ let getNewPlayer = () => {
         liPlayer.append(liButton);
         ulPlayer.append(liPlayer);
         playersListArr.push(player.value);
+        fillResultsObject();
         isDuplicated = false;
-        createPlayersTable(player.value);
+        fillPlayersTable(player.value);
         player.value = '';
-    } else {
+    } 
+//display an error otherwise
+    else {
         document.querySelector('#emptyPlayerAddErr').classList.add('is-active');
         return false;
     }
 
+//display/hide the list of players
     if (playersListVis === false && playersListArr.length === 0 ) {
         ulPlayer.parentElement.classList.add('is-hidden');
         playersListVis = false;
@@ -109,25 +116,28 @@ let getNewPlayer = () => {
 }
 
 
-/* Create results table. Use only once. */
+/* Create results table. Accept player name and create row in atable for it */
 
-const createPlayersTable = (player) => {
+const fillPlayersTable = (player) => {
+//will append new TR to TBODY
     tr = document.createElement('TR');
-    for (let i = 1; i < 9; i++ ) {
-        if (i == 1) {
-            th = document.createElement('TH');
-            th.append(playersListArr.length);
-            tr.appendChild(th);
-        } else {
-            td = document.createElement('TD');
-            let cont = (i == 2) ? player : (i == 8) ? 'Enter the Qualification' : '0';
-            td.append(cont);
-            if (i == 2) {
-                td.classList.add('cell-playername')
-            }
-            tr.appendChild(td); 
-        }
-    }
+
+    th = document.createElement('TH');
+    th.append(playersListArr.length);
+    tr.appendChild(th);
+    
+    td = document.createElement('TD');
+    td.classList.add('playername');
+    td.append(player);
+    tr.appendChild(td);
+
+    let array = Object.keys(resultsObject[player]);
+    array.forEach(el => {
+        td = document.createElement('TD');
+        td.classList.add(`${el}`);
+        td.append(resultsObject[player][el]);
+        tr.appendChild(td);
+    })
     resultsTable.querySelector('tbody').appendChild(tr);
 }
 
@@ -154,7 +164,7 @@ let arrayFilter = (array, val) => {
 const clearPlayersTable = (val, player) => {
     let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
     if (val == 'remove') {
-        let resultsTableRows = document.querySelectorAll('#tableSection tbody .cell-playername');
+        let resultsTableRows = document.querySelectorAll('#tableSection tbody .playername');
         resultsTableRows.forEach(el => {
             if (el.innerText == player) {
                 el.closest('tr').remove();
@@ -162,32 +172,30 @@ const clearPlayersTable = (val, player) => {
         })
     } else {
         resultsTableRows.forEach(el => {
-            if (!el.classList.contains('cell-playername') ) {
-                el.innerHTML = '0';
+            if (!el.classList.contains('playername') ) {
+                el.innerHTML = '---';
             }
         })
+        console.log('clearPlayersTable usual clear');
     }
 }
 
-// Update results table
+// Update results table 
+//REWRITE
 const updatePlayersTable = (player) => {
-
-    clearPlayersTable();
+    console.log('FUNC updatePlayersTable run');
 
     let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
 
-    for (let i = 0; i< resultsTableRows.length; i++) {
-        if (resultsTableRows[i].classList.contains('cell-playername') ) {
-            player = resultsTableRows[i].innerHTML;
-            console.log(resultsObject[player])
-            resultsTableRows[i+1].innerHTML = resultsObject[player].playedRounds;
-            resultsTableRows[i+2].innerHTML = resultsObject[player].wins;
-            resultsTableRows[i+3].innerHTML = resultsObject[player].drawn;
-            resultsTableRows[i+4].innerHTML = resultsObject[player].lose;
-            resultsTableRows[i+5].innerHTML = resultsObject[player].points;
-            resultsTableRows[i+6].innerHTML = resultsObject[player].level;
+    resultsTableRows.forEach(el => {
+        if (el.classList.contains('playername') && el.innerHTML == player) {
+            currentTD = el.nextElementSibling;
+            for(let i = 0; i < resultsObjectProperties.length; i++ ) {
+                currentTD.innerHTML = resultsObject[player][currentTD.classList[0]];
+                currentTD = currentTD.nextElementSibling;
+            } 
         }
-    }
+    });
 }
 
 /**
@@ -215,8 +223,8 @@ const afterStartBlocking = () => {
     });
 }
 
-// define the game with even number of players
-let evenGame = () => {
+// fill dropdown lists with player names from playerlist array;
+let fillDropdownLists = () => {
     isOddGame = false;
     list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
     list.forEach(li => {
@@ -227,6 +235,27 @@ let evenGame = () => {
             li.appendChild(newListPlayer);
         })
     })
+}
+
+//define even game order behaviour
+
+const evenGame = () => {
+    if (!beforeStartCheckEvenCho() && playersListArr.length % 2 === 0) {
+        choosenButtons.forEach(el => {
+            player = el.querySelector('button[is-choosen] span').innerText;
+            roundParticipants.push(player);
+            playerName = el.children[0].innerText;
+            el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
+            el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
+            el.closest('.player-box').querySelector('.player-points ').innerHTML = 0;
+
+            el.querySelector('button[is-choosen]').setAttribute('disabled', '');
+
+            document.querySelectorAll('.player-label').forEach(el => {
+                el.classList.remove('is-hidden');
+            })
+        })
+    }
 }
 
 /**
@@ -310,7 +339,7 @@ let funcUpdateDropdownList = (element, array) => {
 }
 
 let resultsObjectUpdater = (name, prop, val) => {
-
+    console.log('FUNC resultsObjectUpdater run');
     resultsObject[name][prop] = resultsObject[name][`${prop}`] + val;
 
     updatePlayersTable(name);
@@ -318,6 +347,7 @@ let resultsObjectUpdater = (name, prop, val) => {
 }
 
 let resultsObjectLogic = (name, prop, val) => {
+    console.log('FUNC resultsObjectLogic run', name, prop, val);
     if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose' && !isOddGame) {
         resultsObject[name].level = 'Disqualified';
     }
@@ -326,6 +356,34 @@ let resultsObjectLogic = (name, prop, val) => {
     }
 }
 
+/**
+ * fill ResultsObject with data based on the playerListArr that contains all player names
+ */
+
+ let fillResultsObject = () => {
+    for (let i = 0; i < playersListArr.length; i++) {
+        let plname = playersListArr[i]; 
+        info = {};
+        for(let y = 0; y < resultsObjectProperties.length; y++) {
+            if (resultsObjectProperties[y] == 'level') {
+                info[resultsObjectProperties[y]] = 'Enter the Qualification';
+            } else {
+                info[resultsObjectProperties[y]] = 0;
+            }
+        }
+        resultsObject[plname] = info;
+    }
+}
+
+//will run if some player get required points number
+let singleWin = (player) => {
+    if (isOddGame) {
+
+    }
+    else {
+
+    }
+}
 /**
  * END Functions
  */
@@ -378,7 +436,7 @@ startComp.addEventListener('click', function() {
         if ( playersListArr.length % 2  == 0) {
             console.log('Even Game');
             afterStartBlocking();
-            evenGame();
+            fillDropdownLists();
         }
         else {
             console.log('Odd Game');
@@ -433,25 +491,12 @@ startRound.addEventListener('click', function() {
         return false;
     }
 
-    if (!beforeStartCheckEvenCho() && playersListArr.length % 2 === 0 && !isOddGame) {
-        choosenButtons.forEach(el => {
-            player = el.querySelector('button[is-choosen] span').innerText;
-            roundParticipants.push(player);
-            playerName = el.children[0].innerText;
-            el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
-            el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
-            el.closest('.player-box').querySelector('.player-points ').innerHTML = 0;
-
-            el.querySelector('button[is-choosen]').setAttribute('disabled', '');
-
-            document.querySelectorAll('.player-label').forEach(el => {
-                el.classList.remove('is-hidden');
-            })
-        })
-    } 
+ 
     
     if (isOddGame) {
         oddNumberGame();
+    } else {
+        evenGame();
     }
 
     counterSwitcher('enable');
@@ -470,13 +515,9 @@ startRound.addEventListener('click', function() {
 // +1 counter
 counterPlus.forEach(el => {
     el.addEventListener('click', function(e) {
-        playerPointsUpdater(e, 1);
         playerEl = e.target.closest('.player-box').querySelector('.player-name').innerHTML;
         playerName = playerEl.slice(0, -2);
-
-        // if(element == goalsToWin ) {
-        //     evenCompSingleWin(playerName);
-        // }
+        playerPointsUpdater(e, 1);
     })
 })
 
@@ -490,14 +531,19 @@ counterMinus.forEach(el => {
 
 // updade the visual counter
 let playerPointsUpdater = (el, val) => {
+    console.log('FUNC playerPointsUpdater run');
     element = el.target.closest('.player-box').querySelector('.player-points').innerHTML;
-    player = el.target.closest('.player-box').querySelector('.player-name').innerHTML;
 
+    player = el.target.closest('.player-box').querySelector('.player-name').innerHTML;
     player = player.slice(0, -2);
     element = parseInt(element) + val;
-    el.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
 
+    el.target.closest('.player-box').querySelector('.player-points').innerHTML = element;
     resultsObjectUpdater(player, 'points', val);
+
+    if (element == goalsToWin) {
+        singleWin(player);
+    }
 }
 /**
  * END Events
