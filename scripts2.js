@@ -354,6 +354,12 @@ let resultsObjectLogic = (name, prop, val) => {
     if (resultsObject[name][prop] > 1 && resultsObject[name]['win'] > 1 && prop == 'level') {
         resultsObject[name].level = val;
     }
+    if (prop == 'wins' && resultsObject[name]['playedRounds'] == 1 && resultsObject[name][prop] == 1 && !isOddGame) {
+        resultsObject[name]['level'] = 'Pass the Qualification';
+    }
+    if (prop == 'lose' && resultsObject[name]['playedRounds'] == 1 &&resultsObject[name][prop] == 1 && !isOddGame) {
+        resultsObject[name]['level'] = 'Disqualified';
+    }
 }
 
 /**
@@ -380,25 +386,29 @@ let singleWin = (player) => {
     console.log('Single win');
     console.log(player);
     if (isOddGame) {
-        counterSwitcher('disable');
-        resultsObject[firstOrderArr[0]]['wins'] = parseInt(resultsObject[firstOrderArr[0]]['wins']) + 1;
-        updatePlayersTable(firstOrderArr[0]);
+        resultsObjectUpdater(firstOrderArr[0], 'playedRounds', 1);
+        resultsObjectUpdater(firstOrderArr[0], 'wins', 1);
         firstOrderArr = arrayFilter(firstOrderArr, firstOrderArr[0]);
     }
     else {
-
+        resultsObjectUpdater(player, 'playedRounds', 1);
+        resultsObjectUpdater(player, 'wins', 1);
+        playersListArr = arrayFilter(playersListArr, player);
     }
-
+    counterSwitcher('disable');
     singleLost(player);
 }
 
 //will run for player that did not win round
 let singleLost = (player) => {
     if (isOddGame) {
-        resultsObject[secondOrderArr[0]]['lose'] = parseInt(resultsObject[secondOrderArr[0]]['lose']) + 1;
-        updatePlayersTable(secondOrderArr[0]);
+        resultsObjectUpdater(firstOrderArr[0], 'playedRounds', 1);
+        resultsObjectUpdater(firstOrderArr[0], 'lose', 1);
         secondOrderArr = arrayFilter(secondOrderArr, secondOrderArr[0]);
-        
+
+        if(firstOrderArr.length == 0 && secondOrderArr.length == 0) {
+            isOddGame = false;
+        }
     }
     else {
 
@@ -416,6 +426,15 @@ let singleLost = (player) => {
  * Events
  */
 
+//Next round button functionality
+nextRound.addEventListener('click', function() {
+    if (isOddGame) {
+        oddGame();
+    }
+
+    nextRound.setAttribute('disabled', '');
+    startRound.removeAttribute('disabled');
+})
 /* Set the number of goals to win */
 goalsNumber.addEventListener('click', function(e) {
     e.preventDefault();
