@@ -398,11 +398,13 @@ let singleLost = (player) => {
         resultsObject[secondOrderArr[0]]['lose'] = parseInt(resultsObject[secondOrderArr[0]]['lose']) + 1;
         updatePlayersTable(secondOrderArr[0]);
         secondOrderArr = arrayFilter(secondOrderArr, secondOrderArr[0]);
-        nextRound.removeAttribute('disabled');
+        
     }
     else {
 
     }
+
+    nextRound.removeAttribute('disabled');
 }
 
 /**
