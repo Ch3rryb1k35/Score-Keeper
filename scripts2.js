@@ -164,8 +164,8 @@ let arrayFilter = (array, val) => {
 const clearPlayersTable = (val, player) => {
     let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
     if (val == 'remove') {
-        let resultsTableRows = document.querySelectorAll('#tableSection tbody .playername');
-        resultsTableRows.forEach(el => {
+        let resultsTablePlayerCell = document.querySelectorAll('#tableSection tbody .playername');
+        resultsTablePlayerCell.forEach(el => {
             if (el.innerText == player) {
                 el.closest('tr').remove();
             }
@@ -180,14 +180,14 @@ const clearPlayersTable = (val, player) => {
     }
 }
 
-// Update results table 
-//REWRITE
+// Update results table playername data from resultsObject
+
 const updatePlayersTable = (player) => {
     console.log('FUNC updatePlayersTable run');
 
-    let resultsTableRows = document.querySelectorAll('#tableSection tbody tr td');
+    let resultsTableRowsTD = document.querySelectorAll('#tableSection tbody tr td');
 
-    resultsTableRows.forEach(el => {
+    resultsTableRowsTD.forEach(el => {
         if (el.classList.contains('playername') && el.innerHTML == player) {
             currentTD = el.nextElementSibling;
             for(let i = 0; i < resultsObjectProperties.length; i++ ) {
@@ -202,8 +202,8 @@ const updatePlayersTable = (player) => {
  * Creates object with empty data based on the array that contains all player names
  */
 
-let updateResultsObject = (array, object) => {
-   
+let removePlayerFromObject = (array, object) => {
+// delete player from object
     if (array.length != Object.keys(object).length) {
         Object.keys(object).forEach(el => {
             if (!(array.includes(el))) {
@@ -263,7 +263,7 @@ const evenGame = () => {
  * Remove the possibility of adding players manually and fill the player name and count fields. 
  */
 
- const oddNumberGame = () => {
+ const oddGame = () => {
     isOddGame = true;
     dropdownsOn.forEach(el => {
         el.classList.add('is-hidden');
@@ -342,8 +342,8 @@ let resultsObjectUpdater = (name, prop, val) => {
     console.log('FUNC resultsObjectUpdater run');
     resultsObject[name][prop] = resultsObject[name][`${prop}`] + val;
 
-    updatePlayersTable(name);
     resultsObjectLogic(name, prop, val);
+    updatePlayersTable(name);
 }
 
 let resultsObjectLogic = (name, prop, val) => {
@@ -377,13 +377,34 @@ let resultsObjectLogic = (name, prop, val) => {
 
 //will run if some player get required points number
 let singleWin = (player) => {
+    console.log('Single win');
+    console.log(player);
     if (isOddGame) {
+        counterSwitcher('disable');
+        resultsObject[firstOrderArr[0]]['wins'] = parseInt(resultsObject[firstOrderArr[0]]['wins']) + 1;
+        updatePlayersTable(firstOrderArr[0]);
+        firstOrderArr = arrayFilter(firstOrderArr, firstOrderArr[0]);
+    }
+    else {
 
+    }
+
+    singleLost(player);
+}
+
+//will run for player that did not win round
+let singleLost = (player) => {
+    if (isOddGame) {
+        resultsObject[secondOrderArr[0]]['lose'] = parseInt(resultsObject[secondOrderArr[0]]['lose']) + 1;
+        updatePlayersTable(secondOrderArr[0]);
+        secondOrderArr = arrayFilter(secondOrderArr, secondOrderArr[0]);
+        nextRound.removeAttribute('disabled');
     }
     else {
 
     }
 }
+
 /**
  * END Functions
  */
@@ -423,7 +444,7 @@ ulPlayer.addEventListener('click', function(e) {
         playersListArr = itemArr;
 
         clearPlayersTable('remove', item);
-        updateResultsObject(playersListArr, resultsObject);
+        removePlayerFromObject(playersListArr, resultsObject);
     }
 })
 
@@ -441,11 +462,10 @@ startComp.addEventListener('click', function() {
         else {
             console.log('Odd Game');
             afterStartBlocking();
-            oddNumberGame();
+            oddGame();
         }
         startComp.setAttribute('disabled', '');
     }
-    // funcNumberStages();
 })
 
 // players dropdown list activation
@@ -490,11 +510,9 @@ startRound.addEventListener('click', function() {
         document.querySelector('#startRoundWithOnePlayer').classList.add('is-active');
         return false;
     }
-
- 
     
     if (isOddGame) {
-        oddNumberGame();
+        oddGame();
     } else {
         evenGame();
     }
