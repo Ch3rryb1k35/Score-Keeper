@@ -176,14 +176,12 @@ const clearPlayersTable = (val, player) => {
                 el.innerHTML = '---';
             }
         })
-        console.log('clearPlayersTable usual clear');
     }
 }
 
 // Update results table playername data from resultsObject
 
 const updatePlayersTable = (player) => {
-    console.log('FUNC updatePlayersTable run');
 
     let resultsTableRowsTD = document.querySelectorAll('#tableSection tbody tr td');
 
@@ -243,7 +241,7 @@ const evenGame = () => {
     if (!beforeStartCheckEvenCho() && playersListArr.length % 2 === 0) {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
-            roundParticipants.push(player);
+            // roundParticipants.push(player);
             playerName = el.children[0].innerText;
             el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
             el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
@@ -278,6 +276,8 @@ const evenGame = () => {
 
     playerLabels[0].querySelector('.player-points').innerText = '0';
     playerLabels[1].querySelector('.player-points').innerText = '0';
+
+    // fillRoundParticipants();
 }
 
 /**
@@ -339,7 +339,6 @@ let funcUpdateDropdownList = (element, array) => {
 }
 
 let resultsObjectUpdater = (name, prop, val) => {
-    console.log('FUNC resultsObjectUpdater run');
     resultsObject[name][prop] = resultsObject[name][`${prop}`] + val;
 
     resultsObjectLogic(name, prop, val);
@@ -347,7 +346,7 @@ let resultsObjectUpdater = (name, prop, val) => {
 }
 
 let resultsObjectLogic = (name, prop, val) => {
-    console.log('FUNC resultsObjectLogic run', name, prop, val);
+    console.log('FUNC resultsObjectLogic run:', name, prop, val);
     if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose' && !isOddGame) {
         resultsObject[name].level = 'Disqualified';
     }
@@ -383,38 +382,50 @@ let resultsObjectLogic = (name, prop, val) => {
 
 //will run if some player get required points number
 let singleWin = (player) => {
-    console.log('Single win');
-    console.log(player);
+    console.log('Single win:', player);
     if (isOddGame) {
-        resultsObjectUpdater(firstOrderArr[0], 'playedRounds', 1);
-        resultsObjectUpdater(firstOrderArr[0], 'wins', 1);
-        firstOrderArr = arrayFilter(firstOrderArr, firstOrderArr[0]);
+        resultsObjectUpdater(player, 'playedRounds', 1);
+        resultsObjectUpdater(player, 'wins', 1);
+
+        console.log('Win: ', player, ' Lose: ', secondOrderArr[0])
     }
     else {
         resultsObjectUpdater(player, 'playedRounds', 1);
         resultsObjectUpdater(player, 'wins', 1);
         playersListArr = arrayFilter(playersListArr, player);
     }
+    roundParticipants = arrayFilter(roundParticipants, player);
     counterSwitcher('disable');
-    singleLost(player);
+    singleLost(roundParticipants[0]);
 }
 
 //will run for player that did not win round
 let singleLost = (player) => {
     if (isOddGame) {
-        resultsObjectUpdater(firstOrderArr[0], 'playedRounds', 1);
-        resultsObjectUpdater(firstOrderArr[0], 'lose', 1);
-        secondOrderArr = arrayFilter(secondOrderArr, secondOrderArr[0]);
+        resultsObjectUpdater(player, 'playedRounds', 1);
+        resultsObjectUpdater(player, 'lose', 1);
+
+        firstOrderArr = firstOrderArr.slice(1, firstOrderArr.length);
+        secondOrderArr = secondOrderArr.slice(1, secondOrderArr.length);
 
         if(firstOrderArr.length == 0 && secondOrderArr.length == 0) {
             isOddGame = false;
+            fillWinnersArray();
         }
     }
     else {
 
     }
-
+    roundParticipants = [];
     nextRound.removeAttribute('disabled');
+}
+
+let fillWinnersArray = () => {
+    if (isOddGame) {
+        
+    }
+    else {
+
 }
 
 /**
@@ -532,6 +543,8 @@ startRound.addEventListener('click', function() {
         return false;
     }
     
+    fillRoundParticipants();
+
     if (isOddGame) {
         oddGame();
     } else {
@@ -550,6 +563,19 @@ startRound.addEventListener('click', function() {
 
     startRound.setAttribute('disabled', '');
 })
+
+// fill player participants array
+let fillRoundParticipants = () => {
+    if (isOddGame) {
+        roundParticipants.push(firstOrderArr[0]);
+        roundParticipants.push(secondOrderArr[0]);
+    } else {
+        let names = document.querySelectorAll('button[is-choosen="true"] > span:not(.icon)');
+        names.forEach(el => {
+            roundParticipants.push(el.innerHTML);
+        })
+    }
+}
 
 // +1 counter
 counterPlus.forEach(el => {
@@ -570,7 +596,6 @@ counterMinus.forEach(el => {
 
 // updade the visual counter
 let playerPointsUpdater = (el, val) => {
-    console.log('FUNC playerPointsUpdater run');
     element = el.target.closest('.player-box').querySelector('.player-points').innerHTML;
 
     player = el.target.closest('.player-box').querySelector('.player-name').innerHTML;
