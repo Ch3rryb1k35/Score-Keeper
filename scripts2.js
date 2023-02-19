@@ -26,13 +26,18 @@ let activeMenuEl = document.querySelector('#menuSection li.is-active');
  * Variables and arrays
  */
 
- const resultsObjectProperties = [
+const resultsObjectProperties = [
     'playedRounds',
     'wins',
-    'drawn',
     'lose',
     'points',
     'level'
+]
+
+const resultsLevelObjectProperties = [
+    'wins',
+    'lose',
+    'points'
 ]
 
 let firstOrderArr = [];
@@ -43,9 +48,11 @@ let playersListArr = [];
 let playersListArrShift = [];
 let roundParticipants = [];
 let resultsObject = {};
+let resultsLevelObject = {};
 let goalsToWin = 2;
 let numbrOfStages = [];
 let randMatches = [];
+let levelCounter = 0;
 
 /**
  * Boolean Switchers
@@ -420,14 +427,67 @@ let singleLost = (player) => {
     nextRound.removeAttribute('disabled');
 }
 
-let fillWinnersArray = () => {
-    if (isOddGame) {
-        
+//  let updateResultsLevelObject = (level) => {
+//     if (level == 'Qualification') {
+//         resultsLevelObject[level] = {};
+//         Object.keys(resultsObject).forEach(key => {
+//             resultsLevelObject[level][key] = {};
+//             resultsLevelObject[level][key]['wins'] = 0;
+//             resultsLevelObject[level][key]['lose'] = 0;
+//             resultsLevelObject[level][key]['points'] = 0;
+//         })
+//     }
+// }
+
+let fillResultsLevelObject = () => {
+    resultsLevelObject[0] = resultsObject;
+    Object.keys(resultsLevelObject[0]).forEach(el => {
+        delete resultsLevelObject[0][el]['level'];
+        delete resultsLevelObject[0][el]['playedRounds'];
+    })
+} 
+
+let fillLevelRunTable = () => {
+    if (levelCounter == 0) {
+        levelCounter = 'Qualification';
     }
-    else {
+    const table = document.querySelector('.level-runs tbody');
+    trow = document.createElement('TR');
+    th = document.createElement('TH');
+    th.setAttribute('colspan', '4');
+    th.innerText = levelCounter;
+    trow.append(th);
+    trow.classList.add(levelCounter);
+    table.append(trow);
 
-}
+    trow2 = document.createElement('TR');
+    trow2.append(document.createElement('TD'));
+    resultsLevelObjectProperties.forEach(el => {
+        cell = document.createElement('TD');
+        cell.innerText = el;
+        trow2.append(cell);
+    })
+    trow2.classList.add(levelCounter);
+    table.append(trow2);
 
+    Object.keys(resultsObject).forEach(key => {
+        let trowPlayer = document.createElement('TR');
+        let cell = document.createElement('TD');
+        cell.innerText = key;
+        cell.classList.add('playername');
+        trowPlayer.append(cell);
+        trowPlayer.classList.add(`${key}`);
+        trowPlayer.classList.add(levelCounter);
+        
+        resultsLevelObjectProperties.forEach(el => {
+            cell = document.createElement('TD');
+            cell.innerText = 0;
+            cell.classList.add(el);
+            trowPlayer.append(cell);
+        })
+        table.append(trowPlayer);
+    })
+} 
 /**
  * END Functions
  */
@@ -498,6 +558,11 @@ startComp.addEventListener('click', function() {
         }
         startComp.setAttribute('disabled', '');
     }
+    ulPlayer.classList.add('is-hidden');
+    ulPlayer.closest('article.tile').querySelector('p.subtitle').classList.add('is-hidden');
+    
+    fillLevelRunTable();
+    fillResultsLevelObject();
 })
 
 // players dropdown list activation
@@ -562,6 +627,7 @@ startRound.addEventListener('click', function() {
     })
 
     startRound.setAttribute('disabled', '');
+
 })
 
 // fill player participants array
