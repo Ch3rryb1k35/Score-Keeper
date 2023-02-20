@@ -2,25 +2,25 @@
  * Different types of elements on page that cannot be changed
  */
 
-const getPlayer = document.querySelector('#add-player');
-const getPlayerField = document.querySelector('#playersCont input');
-const ulPlayer = document.querySelector('#players-list');
-const startComp = document.querySelector('#startComp');
-const menuSwitch = document.querySelector('#menuSection ul');
-const sections = document.querySelectorAll('section.section');
-const dropdownsOn = document.querySelectorAll('.dropdown');
-const dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu');
-const resultsTable = document.querySelector('#tableSection');
-const startRound = document.querySelector('#start');
-const choosenButtons = document.querySelectorAll('.dropdowwn-players .buttons.has-addons');
-const playerLabels = document.querySelectorAll('.player-label');
-const counterPlus = document.querySelectorAll('button.counter.plus');
-const counterMinus = document.querySelectorAll('button.counter.minus');
-const goalsNumber = document.querySelector('#goals-number');
-const playerCounters = document.querySelectorAll('.player-label > span');
-const nextRound = document.querySelector('#next-round');
-let activeMenuEl = document.querySelector('#menuSection li.is-active');
-
+const 
+    getPlayer = document.querySelector('#add-player'),
+    getPlayerField = document.querySelector('#playersCont input'),
+    ulPlayer = document.querySelector('#players-list'),
+    startComp = document.querySelector('#startComp'),
+    menuSwitch = document.querySelector('#menuSection ul'),
+    sections = document.querySelectorAll('section.section'),
+    dropdownsOn = document.querySelectorAll('.dropdown'),
+    dropdownsOff = document.querySelectorAll('.dropdown .dropdown-menu'),
+    resultsTable = document.querySelector('#tableSection'),
+    startRound = document.querySelector('#start'),
+    choosenButtons = document.querySelectorAll('.dropdowwn-players .buttons.has-addons'),
+    playerLabels = document.querySelectorAll('.player-label'),
+    counterPlus = document.querySelectorAll('button.counter.plus'),
+    counterMinus = document.querySelectorAll('button.counter.minus'),
+    goalsNumber = document.querySelector('#goals-number'),
+    playerCounters = document.querySelectorAll('.player-label > span'),
+    nextRound = document.querySelector('#next-round'),
+    activeMenuEl = document.querySelector('#menuSection li.is-active');
 
 /**
  * Variables and arrays
@@ -34,35 +34,27 @@ const resultsObjectProperties = [
     'level'
 ]
 
-const resultsLevelObjectProperties = [
-    'wins',
-    'lose',
-    'points'
-]
-
-let firstOrderArr = [];
-let secondOrderArr = [];
-let nextOddRoundParticipants = [];
-
-let playersListArr = [];
-let playersListArrShift = [];
-let roundParticipants = [];
-let resultsObject = {};
-let resultsLevelObject = {};
-let goalsToWin = 2;
-let numbrOfStages = [];
-let randMatches = [];
-let levelCounter = 0;
+let firstOrderArr = [],
+    secondOrderArr = [],
+    nextOddRoundParticipants = [],
+    playersListArr = [],
+    playersListArrShift = [],
+    roundParticipants = [],
+    goalsToWin = 2,
+    numbrOfStages = [],
+    randMatches = [],
+    levelCounter = 0,
+    resultsObject = {};
 
 /**
  * Boolean Switchers
  */
-let playersListVis = false;
-let isDropdownActive = false;
-let isPlayerSelected = false;
-let isOddGame = false;
-let isGame = false;
-let isResultsObgect = false;
+let playersListVis = false,
+    isDropdownActive = false,
+    isPlayerSelected = false,
+    isOddGame = false,
+    isGame = false,
+    isResultsObgect = false;
 
 /**
  * Functions
@@ -138,11 +130,11 @@ const fillPlayersTable = (player) => {
     td.append(player);
     tr.appendChild(td);
 
-    let array = Object.keys(resultsObject[player]);
+    let array = Object.keys(resultsObject['total'][player]);
     array.forEach(el => {
         td = document.createElement('TD');
         td.classList.add(`${el}`);
-        td.append(resultsObject[player][el]);
+        td.append(resultsObject['total'][player][el]);
         tr.appendChild(td);
     })
     resultsTable.querySelector('tbody').appendChild(tr);
@@ -196,7 +188,23 @@ const updatePlayersTable = (player) => {
         if (el.classList.contains('playername') && el.innerHTML == player) {
             currentTD = el.nextElementSibling;
             for(let i = 0; i < resultsObjectProperties.length; i++ ) {
-                currentTD.innerHTML = resultsObject[player][currentTD.classList[0]];
+                currentTD.innerHTML = resultsObject['total'][player][currentTD.classList[0]];
+                currentTD = currentTD.nextElementSibling;
+            } 
+        }
+    });
+
+    updateRoundTable(player);
+}
+
+let updateRoundTable = (player) => {
+    let levelTableRowsTD = document.querySelectorAll('.level-runs tbody tr td');
+
+    levelTableRowsTD.forEach(el => {
+        if (el.classList.contains('playername') && el.innerHTML == player) {
+            currentTD = el.nextElementSibling;
+            for(let i = 0; i < 4; i++ ) {
+                currentTD.innerHTML = resultsObject[levelCounter][player][currentTD.classList[0]];
                 currentTD = currentTD.nextElementSibling;
             } 
         }
@@ -346,33 +354,35 @@ let funcUpdateDropdownList = (element, array) => {
 }
 
 let resultsObjectUpdater = (name, prop, val) => {
-    resultsObject[name][prop] = resultsObject[name][`${prop}`] + val;
+    resultsObject['total'][name][prop] = resultsObject['total'][name][prop] + val;
+    resultsObject[levelCounter][name][prop] = resultsObject[levelCounter][name][prop] + val;
 
-    resultsObjectLogic(name, prop, val);
     updatePlayersTable(name);
 }
 
-let resultsObjectLogic = (name, prop, val) => {
-    console.log('FUNC resultsObjectLogic run:', name, prop, val);
-    if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose' && !isOddGame) {
-        resultsObject[name].level = 'Disqualified';
-    }
-    if (resultsObject[name][prop] > 1 && resultsObject[name]['win'] > 1 && prop == 'level') {
-        resultsObject[name].level = val;
-    }
-    if (prop == 'wins' && resultsObject[name]['playedRounds'] == 1 && resultsObject[name][prop] == 1 && !isOddGame) {
-        resultsObject[name]['level'] = 'Pass the Qualification';
-    }
-    if (prop == 'lose' && resultsObject[name]['playedRounds'] == 1 &&resultsObject[name][prop] == 1 && !isOddGame) {
-        resultsObject[name]['level'] = 'Disqualified';
-    }
-}
+// let resultsObjectLogic = (name, prop, val) => {
+//     console.log('FUNC resultsObjectLogic run:', name, prop, val);
+//     if (resultsObject[name][prop] == '1' && resultsObject[name].playedRounds == '1' && prop == 'lose' && !isOddGame) {
+//         resultsObject[name].level = 'Disqualified';
+//     }
+//     if (resultsObject[name][prop] > 1 && resultsObject[name]['win'] > 1 && prop == 'level') {
+//         resultsObject[name].level = val;
+//     }
+//     if (prop == 'wins' && resultsObject[name]['playedRounds'] == 1 && resultsObject[name][prop] == 1 && !isOddGame) {
+//         resultsObject[name]['level'] = 'Pass the Qualification';
+//     }
+//     if (prop == 'lose' && resultsObject[name]['playedRounds'] == 1 &&resultsObject[name][prop] == 1 && !isOddGame) {
+//         resultsObject[name]['level'] = 'Disqualified';
+//     }
+// }
 
 /**
  * fill ResultsObject with data based on the playerListArr that contains all player names
  */
 
  let fillResultsObject = () => {
+    resultsObject['total'] = {};
+    resultsObject[levelCounter] = {};
     for (let i = 0; i < playersListArr.length; i++) {
         let plname = playersListArr[i]; 
         info = {};
@@ -383,7 +393,8 @@ let resultsObjectLogic = (name, prop, val) => {
                 info[resultsObjectProperties[y]] = 0;
             }
         }
-        resultsObject[plname] = info;
+        resultsObject['total'][plname] = structuredClone(info);
+        resultsObject[levelCounter][plname] = structuredClone(info);
     }
 }
 
@@ -427,50 +438,38 @@ let singleLost = (player) => {
     nextRound.removeAttribute('disabled');
 }
 
-//  let updateResultsLevelObject = (level) => {
-//     if (level == 'Qualification') {
-//         resultsLevelObject[level] = {};
-//         Object.keys(resultsObject).forEach(key => {
-//             resultsLevelObject[level][key] = {};
-//             resultsLevelObject[level][key]['wins'] = 0;
-//             resultsLevelObject[level][key]['lose'] = 0;
-//             resultsLevelObject[level][key]['points'] = 0;
-//         })
-//     }
-// }
-
-let fillResultsLevelObject = () => {
-    resultsLevelObject[0] = resultsObject;
-    Object.keys(resultsLevelObject[0]).forEach(el => {
-        delete resultsLevelObject[0][el]['level'];
-        delete resultsLevelObject[0][el]['playedRounds'];
-    })
-} 
-
 let fillLevelRunTable = () => {
+    let levelLabel = '';
+
     if (levelCounter == 0) {
-        levelCounter = 'Qualification';
+        levelLabel = 'Qualification';
+    } else {
+        levelLabel = levelCounter; 
     }
+
     const table = document.querySelector('.level-runs tbody');
     trow = document.createElement('TR');
     th = document.createElement('TH');
     th.setAttribute('colspan', '4');
-    th.innerText = levelCounter;
+    th.innerText = `Current level: ${levelLabel}`;
     trow.append(th);
     trow.classList.add(levelCounter);
     table.append(trow);
 
     trow2 = document.createElement('TR');
     trow2.append(document.createElement('TD'));
-    resultsLevelObjectProperties.forEach(el => {
-        cell = document.createElement('TD');
-        cell.innerText = el;
-        trow2.append(cell);
+    resultsObjectProperties.forEach(el => {
+        if (el == 'wins' || el == 'lose' || el == 'points') {
+            cell = document.createElement('TD');
+            cell.innerText = el;
+            trow2.append(cell);
+        }
+
     })
     trow2.classList.add(levelCounter);
     table.append(trow2);
 
-    Object.keys(resultsObject).forEach(key => {
+    Object.keys(resultsObject[levelCounter]).forEach(key => {
         let trowPlayer = document.createElement('TR');
         let cell = document.createElement('TD');
         cell.innerText = key;
@@ -478,12 +477,13 @@ let fillLevelRunTable = () => {
         trowPlayer.append(cell);
         trowPlayer.classList.add(`${key}`);
         trowPlayer.classList.add(levelCounter);
-        
-        resultsLevelObjectProperties.forEach(el => {
-            cell = document.createElement('TD');
-            cell.innerText = 0;
-            cell.classList.add(el);
-            trowPlayer.append(cell);
+        resultsObjectProperties.forEach(el => {
+            if (el == 'wins' || el == 'lose' || el == 'points') {
+                cell = document.createElement('TD');
+                cell.innerText = 0;
+                cell.classList.add(el);
+                trowPlayer.append(cell);
+            }
         })
         table.append(trowPlayer);
     })
@@ -536,7 +536,7 @@ ulPlayer.addEventListener('click', function(e) {
         playersListArr = itemArr;
 
         clearPlayersTable('remove', item);
-        removePlayerFromObject(playersListArr, resultsObject);
+        removePlayerFromObject(playersListArr, resultsObject['total']);
     }
 })
 
@@ -560,9 +560,8 @@ startComp.addEventListener('click', function() {
     }
     ulPlayer.classList.add('is-hidden');
     ulPlayer.closest('article.tile').querySelector('p.subtitle').classList.add('is-hidden');
-    
+
     fillLevelRunTable();
-    fillResultsLevelObject();
 })
 
 // players dropdown list activation
