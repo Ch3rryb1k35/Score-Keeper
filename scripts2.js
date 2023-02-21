@@ -198,13 +198,14 @@ const updatePlayersTable = (player) => {
 }
 
 let updateRoundTable = (player) => {
+
     let levelTableRowsTD = document.querySelectorAll('.level-runs tbody tr td');
 
     levelTableRowsTD.forEach(el => {
         if (el.classList.contains('playername') && el.innerHTML == player) {
             currentTD = el.nextElementSibling;
-            for(let i = 0; i < 4; i++ ) {
-                currentTD.innerHTML = resultsObject[levelCounter][player][currentTD.classList[0]];
+              for (let i = 0; i < 3; i++ ) {
+                currentTD.innerHTML = resultsObject[levelCounter][player][currentTD.classList['0']];
                 currentTD = currentTD.nextElementSibling;
             } 
         }
