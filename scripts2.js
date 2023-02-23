@@ -40,7 +40,7 @@ let firstOrderArr = [],
     playersListArr = [],
     playersListArrShift = [],
     roundParticipants = [],
-    goalsToWin = 2,
+    goalsToWin = 4,
     numbrOfStages = [],
     randMatches = [],
     levelCounter = 0,
@@ -218,10 +218,11 @@ let updateRoundTable = (player) => {
 
 let removePlayerFromObject = (array, object) => {
 // delete player from object
-    if (array.length != Object.keys(object).length) {
-        Object.keys(object).forEach(el => {
+    if (array.length != Object.keys(object['total']).length) {
+        Object.keys(object['total']).forEach(el => {
             if (!(array.includes(el))) {
-                delete object[el];
+                delete object['total'][el];
+                delete object[0][el];
             }
         })
     }
@@ -418,24 +419,55 @@ let singleWin = (player) => {
     singleLost(roundParticipants[0]);
 }
 
+let equalWinsChecker = (winners, prop) => {
+    
+    let maxgoals = 0;
+    let max, maxCount;
+    Object.keys(resultsObject[levelCounter]).forEach(el => {
+        if (resultsObject[levelCounter][el]['wins'] > maxgoals) {
+            max = el;
+            maxgoals = resultsObject[levelCounter][el]['wins'];
+        }
+    })
+    
+    let counter = 0;
+    Object.keys(resultsObject[levelCounter]).forEach(el => {
+        if (resultsObject[levelCounter][el][prop] == maxgoals) {
+            counter++;
+        }
+    })
+
+    if (counter > winners) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 let nextRoundParticipants = () => {
     levelCounter++;
     resultsObject[levelCounter] = structuredClone(resultsObject[levelCounter - 1]);
     
-    let players = numberPlayersRound();
-    let winners = numberWinnersRound(players);
+    let players = numberPlayersRound(),
+        winners = numberWinnersRound(players),
+        prop = 'wins';
 
-    while( Object.keys(resultsObject[levelCounter]).length > winners ) {
-        let mingoals = goalsToWin;
-        let min;
-        Object.keys(resultsObject[levelCounter]).forEach(el => {
-            if (resultsObject[levelCounter][el]['wins'] < mingoals) {
-                min = el;
-                mingoals = resultsObject[levelCounter][el]['wins'];
-            }
-        })
-        delete resultsObject[levelCounter][min];
+    if(equalWinsChecker(winners, prop)) {
+        prop = 'points';
     }
+    let vari = equalWinsChecker(winners, prop);
+    console.log(vari, prop);
+    // while( Object.keys(resultsObject[levelCounter]).length > winners ) {
+    //     let maxgoals = 0;
+    //     let max, maxCount;
+    //     Object.keys(resultsObject[levelCounter]).forEach(el => {
+    //         if (resultsObject[levelCounter][el]['wins'] > maxgoals) {
+    //             max = el;
+    //             maxgoals = resultsObject[levelCounter][el]['wins'];
+    //         }
+    //     })
+    //     delete resultsObject[levelCounter][min];
+    // }
 
     playersListArr = [];
     Object.keys(resultsObject[levelCounter]).forEach(el => {
@@ -479,7 +511,9 @@ let singleLost = (player) => {
         }
     }
     else {
-
+        if (playersListArr.length == 0) {
+            nextRoundParticipants();
+        }
     }
     roundParticipants = [];
     nextRound.removeAttribute('disabled');
@@ -583,7 +617,7 @@ ulPlayer.addEventListener('click', function(e) {
         playersListArr = itemArr;
 
         clearPlayersTable('remove', item);
-        removePlayerFromObject(playersListArr, resultsObject['total']);
+        removePlayerFromObject(playersListArr, resultsObject);
     }
 })
 
