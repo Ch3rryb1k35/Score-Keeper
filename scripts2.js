@@ -20,7 +20,7 @@ const
     goalsNumber = document.querySelector('#goals-number'),
     playerCounters = document.querySelectorAll('.player-label > span'),
     nextRound = document.querySelector('#next-round'),
-    activeMenuEl = document.querySelector('#menuSection li.is-active');
+    activeMenuEl = document.querySelector('#menuSection li.is-active')
 
 /**
  * Variables and arrays
@@ -44,7 +44,7 @@ let firstOrderArr = [],
     numbrOfStages = [],
     randMatches = [],
     levelCounter = 0,
-    resultsObject = {};
+    resultsObject = {}
 
 /**
  * Boolean Switchers
@@ -54,7 +54,7 @@ let playersListVis = false,
     isPlayerSelected = false,
     isOddGame = false,
     isGame = false,
-    isResultsObgect = false;
+    isResultsObgect = false
 
 /**
  * Functions
@@ -418,8 +418,55 @@ let singleWin = (player) => {
     singleLost(roundParticipants[0]);
 }
 
+let nextRoundParticipants = () => {
+    levelCounter++;
+    resultsObject[levelCounter] = structuredClone(resultsObject[levelCounter - 1]);
+    
+    let players = numberPlayersRound();
+    let winners = numberWinnersRound(players);
+
+    while( Object.keys(resultsObject[levelCounter]).length > winners ) {
+        let mingoals = goalsToWin;
+        let min;
+        Object.keys(resultsObject[levelCounter]).forEach(el => {
+            if (resultsObject[levelCounter][el]['wins'] < mingoals) {
+                min = el;
+                mingoals = resultsObject[levelCounter][el]['wins'];
+            }
+        })
+        delete resultsObject[levelCounter][min];
+    }
+
+    playersListArr = [];
+    Object.keys(resultsObject[levelCounter]).forEach(el => {
+        playersListArr.push(el);
+    })
+}
+
+let numberPlayersRound = () => {
+    number = 0;
+    Object.keys(resultsObject[levelCounter]).forEach(el => {
+        number++;
+    })
+
+    return number;
+}
+
+let numberWinnersRound = (num) => {
+   
+    let number;
+    if (num % 2 !=0) {
+        number = (num - 1)/2;
+    } else {
+        number = num/2;
+    }
+    return number;
+}
+
 //will run for player that did not win round
 let singleLost = (player) => {
+
+
     if (isOddGame) {
         resultsObjectUpdater(player, 'playedRounds', 1);
         resultsObjectUpdater(player, 'lose', 1);
@@ -428,8 +475,7 @@ let singleLost = (player) => {
         secondOrderArr = secondOrderArr.slice(1, secondOrderArr.length);
 
         if(firstOrderArr.length == 0 && secondOrderArr.length == 0) {
-            isOddGame = false;
-            fillWinnersArray();
+            nextRoundParticipants();
         }
     }
     else {
