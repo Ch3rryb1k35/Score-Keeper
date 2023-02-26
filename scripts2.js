@@ -66,6 +66,7 @@ const restartGame = () => {
     isGame = false;
     playersListVis = false;
     ulPlayer.parentElement.classList.add('is-hidden');
+    playersListArr = [];
 }
 
 /* Get player name, add it to the resulta table, add players list visibility after first activation */
@@ -115,7 +116,7 @@ let getNewPlayer = () => {
 }
 
 
-/* Create results table. Accept player name and create row in atable for it */
+/* Create main results table. Accept player name and create row in atable for it */
 
 const fillPlayersTable = (player) => {
 //will append new TR to TBODY
@@ -142,6 +143,7 @@ const fillPlayersTable = (player) => {
 
 /**
  * Check if number of players is bigger than 1. Displays error
+ * fire if you will try to start comp witho one added player
  */
 
 const checkNumPlayers = () => {
@@ -240,9 +242,9 @@ const afterStartBlocking = () => {
 
 // fill dropdown lists with player names from playerlist array;
 let fillDropdownLists = () => {
-    isOddGame = false;
     list = document.querySelectorAll('.dropdowwn-players .dropdown-content');
     list.forEach(li => {
+        li.innerHTML = '';
         playersListArr.forEach(item => {
             newListPlayer = document.createElement('A');
             newListPlayer.classList.add('dropdown-item');
@@ -250,15 +252,25 @@ let fillDropdownLists = () => {
             li.appendChild(newListPlayer);
         })
     })
+
+
 }
 
 //define even game order behaviour
 
 const evenGame = () => {
-    if (!beforeStartCheckEvenCho() && playersListArr.length % 2 === 0) {
+    isOddGame = false;
+    fillDropdownLists();
+
+    drop = document.querySelectorAll('.dropdowwn-players button.button');
+    drop.forEach(btn => {
+        btn.setAttribute('is-choosen', 'false');
+        btn.removeAttribute('disabled');
+    })
+
+    if (!beforeStartCheckEvenCho()) {
         choosenButtons.forEach(el => {
             player = el.querySelector('button[is-choosen] span').innerText;
-            // roundParticipants.push(player);
             playerName = el.children[0].innerText;
             el.closest('.player-box').querySelector('.player-name').innerHTML = `${playerName}: `;
             el.closest('.player-box').querySelector('.player-name + span').classList.remove('is-hidden')
@@ -270,7 +282,12 @@ const evenGame = () => {
                 el.classList.remove('is-hidden');
             })
         })
+
     }
+
+    document.querySelectorAll('.player-label').forEach(el => {
+        el.classList.remove('is-hidden');
+    })
 }
 
 /**
@@ -412,11 +429,39 @@ let singleWin = (player) => {
     else {
         resultsObjectUpdater(player, 'playedRounds', 1);
         resultsObjectUpdater(player, 'wins', 1);
+
+        roundParticipants = arrayFilter(roundParticipants, player);
         playersListArr = arrayFilter(playersListArr, player);
     }
     roundParticipants = arrayFilter(roundParticipants, player);
     counterSwitcher('disable');
     singleLost(roundParticipants[0]);
+}
+
+//will run for player that did not win round
+let singleLost = (player) => {
+    if (isOddGame) {
+        resultsObjectUpdater(player, 'playedRounds', 1);
+        resultsObjectUpdater(player, 'lose', 1);
+
+        firstOrderArr = firstOrderArr.slice(1, firstOrderArr.length);
+        secondOrderArr = secondOrderArr.slice(1, secondOrderArr.length);
+
+        if(firstOrderArr.length == 0 && secondOrderArr.length == 0) {
+            nextRoundParticipants();
+        }
+    }
+    else {
+        resultsObjectUpdater(roundParticipants[0], 'playedRounds', 1);
+        resultsObjectUpdater(roundParticipants[0], 'lose', 1);
+        playersListArr = arrayFilter(playersListArr, roundParticipants[0]);
+        roundParticipants = arrayFilter(roundParticipants, player);
+        if (playersListArr.length == 0) {
+            nextRoundParticipants();
+        }
+    }
+    roundParticipants = [];
+    nextRound.removeAttribute('disabled');
 }
 
 let equalWinsChecker = (winners, prop) => {
@@ -457,17 +502,19 @@ let nextRoundParticipants = () => {
     }
     let vari = equalWinsChecker(winners, prop);
     console.log(vari, prop);
-    // while( Object.keys(resultsObject[levelCounter]).length > winners ) {
-    //     let maxgoals = 0;
-    //     let max, maxCount;
-    //     Object.keys(resultsObject[levelCounter]).forEach(el => {
-    //         if (resultsObject[levelCounter][el]['wins'] > maxgoals) {
-    //             max = el;
-    //             maxgoals = resultsObject[levelCounter][el]['wins'];
-    //         }
-    //     })
-    //     delete resultsObject[levelCounter][min];
-    // }
+
+    while( Object.keys(resultsObject[levelCounter]).length > winners ) {
+
+        let minVal = 10000, minElem;
+
+        Object.keys(resultsObject[levelCounter]).forEach(el => {
+            if (resultsObject[levelCounter][el][prop] < minVal) {
+                minElem = el;
+                minVal = resultsObject[levelCounter][el][prop];
+            }
+        })
+        delete resultsObject[levelCounter][minElem];
+    }
 
     playersListArr = [];
     Object.keys(resultsObject[levelCounter]).forEach(el => {
@@ -493,30 +540,6 @@ let numberWinnersRound = (num) => {
         number = num/2;
     }
     return number;
-}
-
-//will run for player that did not win round
-let singleLost = (player) => {
-
-
-    if (isOddGame) {
-        resultsObjectUpdater(player, 'playedRounds', 1);
-        resultsObjectUpdater(player, 'lose', 1);
-
-        firstOrderArr = firstOrderArr.slice(1, firstOrderArr.length);
-        secondOrderArr = secondOrderArr.slice(1, secondOrderArr.length);
-
-        if(firstOrderArr.length == 0 && secondOrderArr.length == 0) {
-            nextRoundParticipants();
-        }
-    }
-    else {
-        if (playersListArr.length == 0) {
-            nextRoundParticipants();
-        }
-    }
-    roundParticipants = [];
-    nextRound.removeAttribute('disabled');
 }
 
 let fillLevelRunTable = () => {
@@ -579,11 +602,8 @@ let fillLevelRunTable = () => {
  */
 
 //Next round button functionality
+//REWRITE (do not need it)
 nextRound.addEventListener('click', function() {
-    if (isOddGame) {
-        oddGame();
-    }
-
     nextRound.setAttribute('disabled', '');
     startRound.removeAttribute('disabled');
 })
@@ -630,7 +650,7 @@ startComp.addEventListener('click', function() {
         if ( playersListArr.length % 2  == 0) {
             console.log('Even Game');
             afterStartBlocking();
-            fillDropdownLists();
+            evenGame();
         }
         else {
             console.log('Odd Game');
